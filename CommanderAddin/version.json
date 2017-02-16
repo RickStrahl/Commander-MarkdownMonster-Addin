@@ -1,0 +1,14 @@
+﻿{
+  {
+    "id": "Commander",
+    "name": "Commander",
+    "summary": "Lets you launch your own customized command line utilities from within Markdown Monster via hotkeys or the Commander UI.",
+    "description": "This addin allows you to set up any number of external utilities you can launch with command line parameters. You can assign hotkeys to each item so they are easy to launch.",
+    "releaseNotes": null,
+    "version": "0.01",
+    "minversion": "1.1",
+    "author": "© Rick Strahl, West Wind Technologies",
+    "updated": "2017-1-14T12:00:00Z"
+  }
+
+}

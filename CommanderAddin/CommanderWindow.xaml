@@ -1,0 +1,139 @@
+﻿<controls:MetroWindow  x:Class="CommanderAddin.CommanderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CommanderAddin"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d"                            
+        Title="Commander C# Script Execution " TitleCharacterCasing="Normal"        
+        FontSize="14"                              
+        WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterOwner"         
+        IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
+        Width="900" Height="700" MinHeight="500"  MinWidth="700"                     
+        Icon="icon.png"
+        TitlebarHeight="35"
+        WindowTransitionsEnabled="False">
+    <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions >
+                <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+            
+            <ToolBarPanel Name="ToolbarPanelMain" Grid.Row="0" Grid.ColumnSpan="2">
+                <ToolBarPanel.Resources>
+                    <Style x:Key="ToolbarIconRectangleStyle" TargetType="Rectangle">
+                        <Style.Setters>
+                            <Setter Property="Height" Value="16" />
+                            <Setter Property="Width" Value="16" />
+                        </Style.Setters>
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToolBarPanel.Resources>
+
+
+                <StackPanel Orientation="Horizontal">
+                    <ToolBar Name="ToolbarFile" >
+
+                    <Button Name="ToolButtonNewCommand" Click="ToolButtonNewCommand_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Icon="PlusCircle"  Foreground="Green"
+                                            FontSize="15"                                                                                        
+                                            FontWeight="Normal" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
+                                            Margin="5,2,5,0">
+
+                            </fa:FontAwesome>
+
+                            <TextBlock>Add Command</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Name="ToolButtonRemoveCommand" Click="ToolButtonRemoveCommand_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Icon="Remove"  Foreground="Red"
+                                            FontSize="15"                                                                                        
+                                            FontWeight="Normal" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
+                                            Margin="5,2,10,0">
+
+                            </fa:FontAwesome>
+
+                            <TextBlock>Remove Command</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                </ToolBar>
+                <ToolBar>
+                    <Button Name="ToolButtonRunSnippet" Click="ToolButtonRunCommand_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Icon="Play"  Foreground="Green"
+                                            FontSize="15"                                                                                        
+                                            FontWeight="Normal" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
+                                            Margin="5,2,5,0">
+                            </fa:FontAwesome>
+                            <TextBlock>Run Command</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </ToolBar>
+                </StackPanel>
+            </ToolBarPanel>
+
+
+        <ListBox Grid.Row="1" Grid.Column="0" Name="ListCommands"
+                             Background="#333"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             
+                             ItemsSource="{Binding Configuration.Commands}"  
+                             SelectedItem="{Binding ActiveCommand}"
+                             DisplayMemberPath="Name"
+                             IsTextSearchCaseSensitive="False"
+                             IsTextSearchEnabled="True"                   
+                             HorizontalContentAlignment="Stretch"
+                             SelectionChanged="ListCommands_SelectionChanged"
+                             MouseDoubleClick="ListCommands_OnMouseDoubleClick" 
+                             KeyUp="ListCommands_KeyUp">
+        </ListBox>
+
+        <Grid Grid.Row="1" Grid.Column="1"  Margin="10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition  Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Margin="0,0,0,4">Command Name</TextBlock>
+            <TextBox  Grid.Row="1" Text="{Binding ActiveCommand.Name, UpdateSourceTrigger=PropertyChanged }" />
+
+            <Grid Grid.Row="2" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock  Margin="0,10,0,4">Keyboard Shortcut</TextBlock>
+                    <TextBox Text="{Binding ActiveCommand.KeyboardShortcut}"  ToolTip="Keyboard shortcut sequence like Alt+Shift+M, Ctrl+Alt+Enter etc. Requires a restart of Markdown Monster to kick in."  />
+                </StackPanel>
+
+            </Grid>
+
+            <TextBlock Grid.Row="3" Margin="0,10,0,4">Command Text</TextBlock>
+            <WebBrowser Grid.Row="4"  Margin="0,0,0,15" Name="WebBrowserCommand"/>
+
+
+        </Grid>
+
+    </Grid>
+</controls:MetroWindow>
