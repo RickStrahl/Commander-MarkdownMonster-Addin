@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using FontAwesome.WPF;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
@@ -104,18 +106,50 @@ namespace CommanderAddin
             }
         }
 
-   
+        public override void OnApplicationShutdown()
+        {
+            commanderWindow?.Close();
+        }
+
 
         public void RunCommand(CommanderCommand command)
         {
             string code = command.CommandText;
 
-            var parser = new ScriptParser();
+            var parser = new ScriptParser();            
             if (!parser.EvaluateScript(code, Model))
-            { 
-                MessageBox.Show(parser.ErrorMessage, "Snippet Execution failed",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Exclamation);              
+            {
+
+                if (MessageBox.Show(parser.ErrorMessage +
+                                    "\r\n\r\n" +
+                                    "Do you want to display the generated source?",
+                        "Snippet Execution failed",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
+                {
+                    string fname = Path.Combine(Path.GetTempPath(),"_MM_Commander_Compiled.cs");
+                    File.WriteAllText(fname, parser.ScriptInstance.SourceCode);
+                    var tab = Model.Window.OpenTab(fname);
+                    if (tab != null)
+                    {
+                        var editor = tab.Tag as MarkdownDocumentEditor;
+                        editor.SetEditorSyntax("csharp");
+                        editor.SetMarkdown(parser.ScriptInstance.SourceCode);
+
+                        Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+                        {
+                            if (editor.AceEditor == null)
+                                Task.Delay(400);
+                            editor.AceEditor.setshowlinenumbers(true);                            
+                        },DispatcherPriority.ApplicationIdle);
+                        
+
+                    }
+                }
+
+
+
+
             }            
         }
     }

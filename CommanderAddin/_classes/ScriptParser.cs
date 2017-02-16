@@ -34,6 +34,8 @@ namespace CommanderAddin
         
         public string ErrorMessage { get; set; }
 
+        public wwScripting ScriptInstance { get; set; }
+
 
         public static Dictionary<string, Assembly> CodeBlocks = new Dictionary<string, Assembly>();
 
@@ -50,13 +52,13 @@ namespace CommanderAddin
         public bool EvaluateScript(string code, object model = null)
         {
 
-            var scripting = CreatewwScripting();
+            ScriptInstance = CreatewwScripting();
 
 
             if (CodeBlocks.ContainsKey(code))
             {
                 Debug.WriteLine("wwScripting Cached Code: \r\n" + code);
-                scripting.ExecuteCodeFromAssembly(code, CodeBlocks[code], model);
+                ScriptInstance.ExecuteCodeFromAssembly(code, CodeBlocks[code], model);
             }
             else
             {
@@ -82,15 +84,15 @@ namespace CommanderAddin
                             assemblyName = fullAssemblyName;
 
                         // Add to Engine since host is already instantiated
-                        scripting.AddAssembly(assemblyName);
+                        ScriptInstance.AddAssembly(assemblyName);
                         continue;
                     }
                     if (line.Trim().Contains("using "))
                     {
                         string ns = line.Replace("using ", "").Replace(";","").Trim();
 
-                        if (!scripting.Namespaces.Contains("using " + ns + ";"))                            
-                            scripting.AddNamespace(ns);
+                        if (!ScriptInstance.Namespaces.Contains("using " + ns + ";"))                            
+                            ScriptInstance.AddNamespace(ns);
                         continue;
                     }
 
@@ -100,19 +102,19 @@ namespace CommanderAddin
                 code = sb.ToString();
 
 
-                code = "dynamic Model = Parameters[0];\r\n" +
-                       code + "\r\nreturn null;";
-                Debug.WriteLine("wwScripting Code: \r\n" + code);
-                scripting.ExecuteCode(code, model);
                 
-                if (scripting.Assembly != null)
-                    CodeBlocks[code] = scripting.Assembly;
+                code = "dynamic Model = Parameters[0];\r\n" +
+                       code + "\r\nreturn null;";                
+                ScriptInstance.ExecuteCode(code, model);
+                
+                if (ScriptInstance.Assembly != null)
+                    CodeBlocks[code] = ScriptInstance.Assembly;
             }
 
-            if (scripting.Error)
-                ErrorMessage = scripting.ErrorMessage;
+            if (ScriptInstance.Error)
+                ErrorMessage = ScriptInstance.ErrorMessage;
 
-            return !scripting.Error;
+            return !ScriptInstance.Error;
         }
 
         /// <summary>
@@ -154,7 +156,9 @@ namespace CommanderAddin
             
             scripting.AddNamespace("MarkdownMonster");
             scripting.AddNamespace("Westwind.Utilities");
-            
+
+            scripting.SaveSourceCode = true;
+
             return scripting;
         }        
     }

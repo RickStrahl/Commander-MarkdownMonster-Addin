@@ -51,10 +51,7 @@ namespace CommanderAddin
             WebBrowserCommand.Visibility = Visibility.Hidden;
 
             DataContext = Model;            
-        }
-
-      
-
+        }      
 
         private MarkdownEditorSimple editor;
 
@@ -80,7 +77,7 @@ namespace CommanderAddin
             Dispatcher.InvokeAsync(() =>
             {
                 ListCommands.Focus();
-                editor.SetEditorSyntax("csharp");
+                editor.SetEditorSyntax("csharp");                
             },System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         }
 

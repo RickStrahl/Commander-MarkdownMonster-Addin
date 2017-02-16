@@ -225,18 +225,19 @@ namespace Westwind.wwScripting
 				if (ScriptingLanguage == "CSharp") 
 				{
 					// *** Namespace headers and class definition
-					sb.Append("namespace " + AssemblyNamespace + "{\r\npublic class " + ClassName + ":MarshalByRefObject {\r\n");	
+					sb.Append("namespace " + AssemblyNamespace + "\r\n{\r\n\tpublic class " + ClassName + ":MarshalByRefObject\r\n\t{\r\n");	
 				
 					// *** Generic Invoke method required for the remote call interface
 					sb.Append(
-						"public object Invoke(string lcMethod,object[] parms)\r\n{ " + 
-						"return this.GetType().InvokeMember(lcMethod,BindingFlags.InvokeMethod,null,this,parms );\r\n" +
-						"}\r\n\r\n" );
+						"\t\tpublic object Invoke(string lcMethod,object[] parms)\r\n" +
+                        "\t\t{\r\n" + 
+						"\t\t\treturn this.GetType().InvokeMember(lcMethod,BindingFlags.InvokeMethod,null,this,parms );\r\n" +
+						"\t\t}\r\n\r\n" );
 
 					//*** The actual code to run in the form of a full method definition.
 					sb.Append(code);
 
-					sb.Append("\r\n} }");  // Class and namespace closed
+					sb.Append("\r\n\t}\r\n}");  // Class and namespace closed
 				}
 				else if (ScriptingLanguage == "VB") 
 				{
@@ -288,9 +289,9 @@ namespace Westwind.wwScripting
 		public object ExecuteCode(string code, params object[] parameters) 
 		{	
 			if (ScriptingLanguage == "CSharp")
-				return ExecuteMethod("public object ExecuteCode(params object[] Parameters) \r\n{\r\n" + 
+				return ExecuteMethod("public object ExecuteCode(params object[] Parameters)\r\n{\r\n\r\n" + 
 						code + 
-						"\r\n}",
+						"\r\n\r\n}",
 						"ExecuteCode",parameters);
 			else if (ScriptingLanguage == "VB")
 				return ExecuteMethod("public function ExecuteCode(ParamArray Parameters() As Object) as object\r\n" + 
