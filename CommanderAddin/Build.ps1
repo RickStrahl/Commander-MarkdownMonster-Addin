@@ -1,3 +1,6 @@
+# Build script that creates the \Build folder final output
+# that can be shared on GitHub and the public Markdown Monster Addins Repo
+
 cd "$PSScriptRoot" 
 
 $src = "$env:appdata\Markdown Monster\Addins\Commander"
