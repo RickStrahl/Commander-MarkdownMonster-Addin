@@ -4,7 +4,7 @@
 
 <img src="icon.png" Height="128"  />
 
-> #### @icon-warning Pre-release 
+> #### Pre-release 
 > This addin is currently in alpha state and only available in source code format.
 
 This add-in lets you extend Markdown Monster via custom C# scripts or external executable that can be tied to a hotkey or can be executed via the Commander addin's user interface. Commander scripts can be thought of as mini add-ins that can be created without requiring a full addin.
