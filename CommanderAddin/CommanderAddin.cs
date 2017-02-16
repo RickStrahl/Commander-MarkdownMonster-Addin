@@ -125,7 +125,8 @@ namespace CommanderAddin
                                     "Do you want to display the generated source?",
                         "Snippet Execution failed",
                         MessageBoxButton.YesNo,
-                        MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
+                        MessageBoxImage.Exclamation,
+                        MessageBoxResult.No) == MessageBoxResult.Yes)
                 {
                     string fname = Path.Combine(Path.GetTempPath(),"_MM_Commander_Compiled.cs");
                     File.WriteAllText(fname, parser.ScriptInstance.SourceCode);

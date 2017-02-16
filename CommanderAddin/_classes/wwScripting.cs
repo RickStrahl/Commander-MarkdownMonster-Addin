@@ -237,7 +237,7 @@ namespace Westwind.wwScripting
 					//*** The actual code to run in the form of a full method definition.
 					sb.Append(code);
 
-					sb.Append("\r\n\t}\r\n}");  // Class and namespace closed
+					sb.Append("\r\n\r\n\t}\r\n}");  // Class and namespace closed
 				}
 				else if (ScriptingLanguage == "VB") 
 				{

@@ -1,4 +1,6 @@
 ﻿//if false
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -99,16 +101,21 @@ namespace CommanderAddin
                     sb.AppendLine(line);
                 }
 
+                string oldPath = Environment.CurrentDirectory;
+
+
                 code = sb.ToString();
-
-
-                
                 code = "dynamic Model = Parameters[0];\r\n" +
-                       code + "\r\nreturn null;";                
+                       code + "\r\n" + 
+                       "return null;";
+
                 ScriptInstance.ExecuteCode(code, model);
                 
+                // cache the generated assembly for reuse on subsequent runs
                 if (ScriptInstance.Assembly != null)
                     CodeBlocks[code] = ScriptInstance.Assembly;
+
+                Directory.SetCurrentDirectory(oldPath);
             }
 
             if (ScriptInstance.Error)
