@@ -3,11 +3,12 @@
 
 cd "$PSScriptRoot" 
 
-$src = "$env:appdata\Markdown Monster\Addins\Commander"
+$src = "."
+$dlls = "$env:appdata\Markdown Monster\Addins\Commander"
 $tgt = "..\Build"
 $dist = "..\Build\Distribution"
 
-"Copying from: $src"
+"Copying from: $dlls"
 
 "Cleaning up build files..."
 remove-item -recurse -force $tgt
@@ -15,13 +16,13 @@ md $tgt
 md $dist
 
 "Copying files for zip file..."
-copy "$src\*.dll" $dist
-copy ".\version.json" $dist
+copy "$dlls\*.dll" $dist
+copy "$src\version.json" $dist
 
 "Copying files for Build folder..."
-copy ".\version.json" $tgt
-copy ".\icon.png" $tgt
-copy ".\screenshot.png" $tgt
+copy "$src\version.json" $tgt
+copy "$src\icon.png" $tgt
+copy "$src\screenshot.png" $tgt
 
 "Zipping up setup file..."
 7z a -tzip  $tgt\addin.zip $dist\*.*
