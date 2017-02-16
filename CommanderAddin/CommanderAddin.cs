@@ -12,23 +12,21 @@ namespace CommanderAddin
     public class CommanderAddin : MarkdownMonster.AddIns.MarkdownMonsterAddin
     {
 
-        private CommanderWindow commanerWindow;
+        private CommanderWindow commanderWindow;
 
         public override void OnApplicationStart()
         {
             base.OnApplicationStart();
 
-            Id = " CommanderAddin";
+            Id = "Commander";
 
             // by passing in the add in you automatically
             // hook up OnExecute/OnExecuteConfiguration/OnCanExecute
             var menuItem = new AddInMenuItem(this)
             {
                 Caption = "Commander Command Line Execution Launcher",
-
-                // if an icon is specified it shows on the toolbar
-                // if not the add-in only shows in the add-ins menu
-                FontawesomeIcon = FontAwesomeIcon.Terminal
+                FontawesomeIcon = FontAwesomeIcon.Terminal,
+                KeyboardShortcut = CommanderAddinConfiguration.Current.KeyboardShortcut
             };
 
             // if you don't want to display config or main menu item clear handler
@@ -40,16 +38,16 @@ namespace CommanderAddin
 
         public override void OnExecute(object sender)
         {
-            if(commanerWindow == null || !commanerWindow.IsLoaded)
+            if(commanderWindow == null || !commanderWindow.IsLoaded)
             {
-                commanerWindow = new CommanderWindow(this);
+                commanderWindow = new CommanderWindow(this);
 
-                commanerWindow.Top = Model.Window.Top;
-                commanerWindow.Left = Model.Window.Left + Model.Window.Width -
+                commanderWindow.Top = Model.Window.Top;
+                commanderWindow.Left = Model.Window.Left + Model.Window.Width -
                                       Model.Configuration.WindowPosition.SplitterPosition;
             }
-            commanerWindow.Show();
-            commanerWindow.Activate();
+            commanderWindow.Show();
+            commanderWindow.Activate();
         }
 
         public override void OnExecuteConfiguration(object sender)
