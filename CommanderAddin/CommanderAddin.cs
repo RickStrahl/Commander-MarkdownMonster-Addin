@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using FontAwesome.WPF;
@@ -115,43 +118,76 @@ namespace CommanderAddin
         public void RunCommand(CommanderCommand command)
         {
             string code = command.CommandText;
-
-            var parser = new ScriptParser();            
-            if (!parser.EvaluateScript(code, Model))
+            
+            bool showConsole = commanderWindow != null && commanderWindow.Visibility == Visibility.Visible;
+            if (showConsole)
             {
-
-                if (MessageBox.Show(parser.ErrorMessage +
-                                    "\r\n\r\n" +
-                                    "Do you want to display the generated source?",
-                        "Snippet Execution failed",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Exclamation,
-                        MessageBoxResult.No) == MessageBoxResult.Yes)
+                var tbox = commanderWindow.TextConsole;
+                tbox.Clear();
+                Console.SetOut(new ConsoleTextWriter()
                 {
-                    string fname = Path.Combine(Path.GetTempPath(),"_MM_Commander_Compiled.cs");
-                    File.WriteAllText(fname, parser.ScriptInstance.SourceCode);
-                    var tab = Model.Window.OpenTab(fname);
-                    if (tab != null)
+                    tbox = tbox
+                });
+            }
+
+            using (var process = Process.GetCurrentProcess())
+            {                                
+                var parser = new ScriptParser();            
+                if (!parser.EvaluateScript(code, Model))
+                {
+
+                    if (MessageBox.Show(parser.ErrorMessage +
+                                        "\r\n\r\n" +
+                                        "Do you want to display the generated source?",
+                            "Snippet Execution failed",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Exclamation,
+                            MessageBoxResult.No) == MessageBoxResult.Yes)
                     {
-                        var editor = tab.Tag as MarkdownDocumentEditor;
-                        editor.SetEditorSyntax("csharp");
-                        editor.SetMarkdown(parser.ScriptInstance.SourceCode);
-
-                        Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+                        string fname = Path.Combine(Path.GetTempPath(),"_MM_Commander_Compiled.cs");
+                        File.WriteAllText(fname, parser.ScriptInstance.SourceCode);
+                        var tab = Model.Window.OpenTab(fname);
+                        if (tab != null)
                         {
-                            if (editor.AceEditor == null)
-                                Task.Delay(400);
-                            editor.AceEditor.setshowlinenumbers(true);                            
-                        },DispatcherPriority.ApplicationIdle);
-                        
+                            var editor = tab.Tag as MarkdownDocumentEditor;
+                            editor.SetEditorSyntax("csharp");
+                            editor.SetMarkdown(parser.ScriptInstance.SourceCode);
 
+                            Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+                            {
+                                if (editor.AceEditor == null)
+                                    Task.Delay(400);
+                                editor.AceEditor.setshowlinenumbers(true);                            
+                            },DispatcherPriority.ApplicationIdle);
+                        }
                     }
                 }
+            }
 
-
-
-
-            }            
+            if (showConsole)
+            {                
+                StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
+                standardOutput.AutoFlush = true;
+                Console.SetOut(standardOutput);
+            }
         }
+    }
+
+    public class ConsoleTextWriter : TextWriter
+    {
+        public TextBox tbox;
+
+        public override void Write(char value)
+        {
+                            
+                tbox.Text += value;
+                tbox.ScrollToEnd();
+            
+        }        
+
+        public override Encoding Encoding
+        {
+            get { return Encoding.Default; }
+        }        
     }
 }

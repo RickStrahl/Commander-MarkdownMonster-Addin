@@ -74,6 +74,7 @@
     <Compile Include="_classes\wwScripting.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="hsizegrip.png" />
     <Content Include="version.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

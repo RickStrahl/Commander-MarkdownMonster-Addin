@@ -6,6 +6,6 @@
     <StartWorkingDirectory>c:\Program Files %28x86%29\Markdown Monster</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup>
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
 </Project>
