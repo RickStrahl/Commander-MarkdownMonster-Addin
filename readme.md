@@ -12,7 +12,7 @@ This add-in lets you extend Markdown Monster via custom C# scripts or external e
 ### Simple Examples
 The following script runs some arbitrary code and displays a message box:
 
-![](screenshot.png)
+![](CommanderAddin/screenshot.png)
 
 You can also launch external code easily. For example to launch my Git client (SmartGit) in the repo for the current document I can do:
 

@@ -55,7 +55,7 @@ namespace CommanderAddin
                 OnPropertyChanged(nameof(OpenSourceInEditorOnErrors));
             }
         }
-        private bool _openSourceInEditorOnErrors = true;
+        private bool _openSourceInEditorOnErrors;
 
         public ObservableCollection<CommanderCommand> Commands
         {
