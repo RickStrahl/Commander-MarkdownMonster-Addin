@@ -93,7 +93,7 @@
                              Background="#333"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                              
-                             ItemsSource="{Binding Configuration.Commands}"  
+                             ItemsSource="{Binding AddinConfiguration.Commands}"  
                              SelectedItem="{Binding ActiveCommand}"
                              DisplayMemberPath="Name"
                              IsTextSearchCaseSensitive="False"

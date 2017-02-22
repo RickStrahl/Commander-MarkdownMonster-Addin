@@ -20,8 +20,17 @@ namespace CommanderAddin
 
         private CommanderWindow commanderWindow;
 
+        public CommanderAddinModel AddinModel { get; set; }
+
         public override void OnApplicationStart()
         {
+            AddinModel = new CommanderAddinModel {
+                AppModel = Model,
+                AddinConfiguration = CommanderAddinConfiguration.Current,                
+                Addin = this
+            };
+
+
             base.OnApplicationStart();
 
             Id = "Commander";
@@ -46,14 +55,22 @@ namespace CommanderAddin
         {
             if(commanderWindow == null || !commanderWindow.IsLoaded)
             {
+                AddinModel.Window = Model.Window;
+                AddinModel.AppModel = Model;                
+                
                 commanderWindow = new CommanderWindow(this);
 
                 commanderWindow.Top = Model.Window.Top;
                 commanderWindow.Left = Model.Window.Left + Model.Window.Width -
                                       Model.Configuration.WindowPosition.SplitterPosition;
+
+                
+ 
             }
             commanderWindow.Show();
             commanderWindow.Activate();
+
+            
         }
 
         public override void OnExecuteConfiguration(object sender)
@@ -135,7 +152,7 @@ namespace CommanderAddin
             using (var process = Process.GetCurrentProcess())
             {                                
                 var parser = new ScriptParser();            
-                if (!parser.EvaluateScript(code, Model))
+                if (!parser.EvaluateScriptRoslyn(code, AddinModel))
                 {
 
                     Console.WriteLine("*** Error running Script code:\r\n" + 

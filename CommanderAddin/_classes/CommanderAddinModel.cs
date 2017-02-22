@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using MarkdownMonster;
@@ -14,9 +15,11 @@ namespace CommanderAddin
         {
         }
 
-        public CommanderAddin Addin { get; set;  }               
-        public MainWindow Window { get; set; }
-                
+        /// <summary>
+        /// Access to the main Markdown Monster applicaiton Model
+        /// Some of the properties are duplicated on this model
+        /// to make it easier to access in code.
+        /// </summary>
         public AppModel AppModel
         {
             get { return _appModel; }
@@ -28,8 +31,41 @@ namespace CommanderAddin
             }
         }
         private AppModel _appModel;
+        
+
+        /// <summary>
+        /// Access to the Addin implementation
+        /// </summary>
+        public CommanderAddin Addin { get; set;  }
+
+
+        /// <summary>
+        /// Access to Markdown Monster's Main Configuration
+        /// </summary>
+        public ApplicationConfiguration Configuration { get; set; }
 
         
+        /// <summary>
+        /// Access to the Addin's Configuration
+        /// </summary>
+        public CommanderAddinConfiguration AddinConfiguration { get; set; }
+
+        /// <summary>
+        /// Instance of the Addin's Window object
+        /// </summary>
+        public CommanderWindow AddinWindow { get; set; }
+
+        /// <summary>
+        /// Access to the main Markdown Monster Window
+        /// </summary>
+        public MainWindow Window { get; set; }
+                
+
+        
+        /// <summary>
+        /// Holds the currently active command instance in the
+        /// editor/viewer.
+        /// </summary>
         public CommanderCommand ActiveCommand
         {
             get { return _activeCommand; }
@@ -41,10 +77,27 @@ namespace CommanderAddin
             }
         }
         private CommanderCommand _activeCommand;
-        
 
-        
-        public CommanderAddinConfiguration Configuration { get; set; }
+
+        /// <summary>
+        /// Instance of the currently active Markdown Document object
+        /// </summary>
+        public MarkdownDocument ActiveDocument => AppModel.ActiveDocument;
+
+
+        /// <summary>
+        /// Instance of the Markdown Editor browser and ACE Editor instance
+        /// </summary>
+        public MarkdownDocumentEditor ActiveEditor => AppModel.ActiveEditor;
+
+
+        /// <summary>
+        /// List of all the open document objects in the editor
+        /// </summary>
+        public List<MarkdownDocument> OpenDocuments => AppModel.OpenDocuments;
+
+
+        #region INotifyPropertyChanged        
 
         private ObservableCollection<CommanderCommand> _commands = new ObservableCollection<CommanderCommand>();
 
@@ -56,6 +109,7 @@ namespace CommanderAddin
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 
    

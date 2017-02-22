@@ -22,30 +22,24 @@ namespace CommanderAddin
             InitializeComponent();
             mmApp.SetThemeWindowOverride(this);
 
+            Model = addin.AddinModel;
+            Model.AddinWindow = this;
 
-            Model = new CommanderAddinModel()
+
+            if (Model.AddinConfiguration.Commands == null || Model.AddinConfiguration.Commands.Count < 1)
             {
-                Configuration = CommanderAddinConfiguration.Current,
-                Window = addin.Model.Window,
-                AppModel = addin.Model.Window.Model,                
-                Addin = addin                               
-            };
-
-
-            if (Model.Configuration.Commands == null || Model.Configuration.Commands.Count < 1)
-            {
-                Model.Configuration.Commands = new System.Collections.ObjectModel.ObservableCollection<CommanderCommand>();
-                Model.Configuration.Commands.Add(new CommanderCommand
+                Model.AddinConfiguration.Commands = new System.Collections.ObjectModel.ObservableCollection<CommanderCommand>();
+                Model.AddinConfiguration.Commands.Add(new CommanderCommand
                 {
                     Name = "Copyright Notice",
                 });
             }
             else
             {
-                Model.Configuration.Commands =
-                    new ObservableCollection<CommanderCommand>(Model.Configuration.Commands.OrderBy(snip => snip.Name));
-                if (Model.Configuration.Commands.Count > 0)
-                    Model.ActiveCommand = Model.Configuration.Commands[0];
+                Model.AddinConfiguration.Commands =
+                    new ObservableCollection<CommanderCommand>(Model.AddinConfiguration.Commands.OrderBy(snip => snip.Name));
+                if (Model.AddinConfiguration.Commands.Count > 0)
+                    Model.ActiveCommand = Model.AddinConfiguration.Commands[0];
             }
 
             Loaded += CommandsWindow_Loaded;
@@ -61,10 +55,10 @@ namespace CommanderAddin
         private void CommandsWindow_Loaded(object sender, RoutedEventArgs e)
         {
             string initialValue = null;
-            if (Model.Configuration.Commands.Count > 0)
+            if (Model.AddinConfiguration.Commands.Count > 0)
             {
-                ListCommands.SelectedItem = Model.Configuration.Commands[0];
-                initialValue = Model.Configuration.Commands[0].CommandText;
+                ListCommands.SelectedItem = Model.AddinConfiguration.Commands[0];
+                initialValue = Model.AddinConfiguration.Commands[0].CommandText;
             }
 
             editor = new MarkdownEditorSimple(WebBrowserCommand, initialValue);            
@@ -102,8 +96,8 @@ namespace CommanderAddin
 
         private void ToolButtonNewCommand_Click(object sender, RoutedEventArgs e)
         {
-            Model.Configuration.Commands.Insert(0,new CommanderCommand() {Name = "New Command"});
-            ListCommands.SelectedItem = Model.Configuration.Commands[0];
+            Model.AddinConfiguration.Commands.Insert(0,new CommanderCommand() {Name = "New Command"});
+            ListCommands.SelectedItem = Model.AddinConfiguration.Commands[0];
         }
 
 
