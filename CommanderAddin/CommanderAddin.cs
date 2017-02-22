@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using FontAwesome.WPF;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
+using MarkdownMonster.Windows;
 
 namespace CommanderAddin
 {
@@ -128,6 +129,7 @@ namespace CommanderAddin
                 {
                     tbox = tbox
                 });
+                
             }
 
             using (var process = Process.GetCurrentProcess())
@@ -136,17 +138,24 @@ namespace CommanderAddin
                 if (!parser.EvaluateScript(code, Model))
                 {
 
-                    if (MessageBox.Show(parser.ErrorMessage +
-                                        "\r\n\r\n" +
-                                        "Do you want to display the generated source?",
-                            "Snippet Execution failed",
-                            MessageBoxButton.YesNo,
-                            MessageBoxImage.Exclamation,
-                            MessageBoxResult.No) == MessageBoxResult.Yes)
+                    Console.WriteLine("*** Error running Script code:\r\n" + 
+                                      parser.ErrorMessage);
+                    
+                    //if (MessageBox.Show(parser.ErrorMessage +
+                    //                    "\r\n\r\n" +
+                    //                    "Do you want to display the generated source?",
+                    //        "Snippet Execution failed",
+                    //        MessageBoxButton.YesNo,
+                    //        MessageBoxImage.Exclamation,
+                    //        MessageBoxResult.No) == MessageBoxResult.Yes)
+                    //{
+                    if (CommanderAddinConfiguration.Current.OpenSourceInEditorOnErrors)
                     {
-                        string fname = Path.Combine(Path.GetTempPath(),"_MM_Commander_Compiled.cs");
+                        string fname = Path.Combine(Path.GetTempPath(), "Commander_Compiled_Code.cs");
                         File.WriteAllText(fname, parser.ScriptInstance.SourceCode);
                         var tab = Model.Window.OpenTab(fname);
+                        File.Delete(fname);
+
                         if (tab != null)
                         {
                             var editor = tab.Tag as MarkdownDocumentEditor;
@@ -157,15 +166,19 @@ namespace CommanderAddin
                             {
                                 if (editor.AceEditor == null)
                                     Task.Delay(400);
-                                editor.AceEditor.setshowlinenumbers(true);                            
-                            },DispatcherPriority.ApplicationIdle);
+                                editor.AceEditor.setshowlinenumbers(true);
+
+                                commanderWindow.Activate();
+
+                            }, DispatcherPriority.ApplicationIdle);
                         }
                     }
                 }
             }
 
             if (showConsole)
-            {                
+            {
+                commanderWindow.TextConsole.ScrollToHome();
                 StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
                 standardOutput.AutoFlush = true;
                 Console.SetOut(standardOutput);
@@ -175,15 +188,21 @@ namespace CommanderAddin
 
     public class ConsoleTextWriter : TextWriter
     {
-        public TextBox tbox;
+        public TextBox tbox;        
 
         public override void Write(char value)
+        {                                            
+                tbox.Text += value;                
+                tbox.ScrollToEnd();        
+                if (value == '\n')
+                    WindowUtilities.DoEvents();
+        }
+
+        public override void Write(string value)
         {
-                            
-                tbox.Text += value;
-                tbox.ScrollToEnd();
-            
-        }        
+            base.Write(value);
+            WindowUtilities.DoEvents();
+        }
 
         public override Encoding Encoding
         {

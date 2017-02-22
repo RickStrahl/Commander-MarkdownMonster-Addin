@@ -41,6 +41,22 @@ namespace CommanderAddin
         }
         private string _keyboardShortcut = string.Empty;
 
+        
+        /// <summary>
+        /// if true opens the source code for a failed script in the editor
+        /// </summary>
+        public bool OpenSourceInEditorOnErrors
+        {
+            get { return _openSourceInEditorOnErrors; }
+            set
+            {
+                if (_openSourceInEditorOnErrors == value) return;
+                _openSourceInEditorOnErrors = value;
+                OnPropertyChanged(nameof(OpenSourceInEditorOnErrors));
+            }
+        }
+        private bool _openSourceInEditorOnErrors = true;
+
         public ObservableCollection<CommanderCommand> Commands
         {
             get { return _commands; }

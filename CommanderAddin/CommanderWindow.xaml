@@ -12,7 +12,7 @@
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterOwner"         
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
-        Width="900" Height="700" MinHeight="500"  MinWidth="700"                     
+        Width="1100" Height="900" MinHeight="600"  MinWidth="700"                     
         Icon="icon.png"
         TitlebarHeight="35"
         WindowTransitionsEnabled="False">
@@ -23,8 +23,9 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions >
                 <RowDefinition Height="30" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
             
             <ToolBarPanel Name="ToolbarPanelMain" Grid.Row="0" Grid.ColumnSpan="2">
                 <ToolBarPanel.Resources>
@@ -110,8 +111,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition  Height="*"/>
-                <RowDefinition Height="12" />
-                <RowDefinition Height="80" />
+                <RowDefinition Height="22" />
+                <RowDefinition Height="90" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Margin="0,0,0,4">Command Name</TextBlock>
             <TextBox  Grid.Row="1" Text="{Binding ActiveCommand.Name, UpdateSourceTrigger=PropertyChanged }" />
@@ -138,13 +139,44 @@
                 <GridSplitter.Template>
                     <ControlTemplate TargetType="{x:Type GridSplitter}">
                         <Grid Background="Transparent">
-                            <Image Source="hsizegrip.png" Width="30"  HorizontalAlignment="Center" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Foreground="#cccccc"  Padding="0,2,0,0">Console output</TextBlock>
+                                <Image Grid.Column="0" Source="hsizegrip.png" Width="30" HorizontalAlignment="Center" />
+                            </Grid>
+
                         </Grid>
                     </ControlTemplate>
                 </GridSplitter.Template>
             </GridSplitter>
-            <TextBox Name="TextConsole" Grid.Row="6" FontFamily="Consolas" FontSize="16" Margin="0,0,0,15" BorderThickness="0">Console output</TextBox>
+            <TextBox Name="TextConsole" Grid.Row="6" FontFamily="Consolas" FontSize="16" Background="#292929" BorderThickness="0"></TextBox>
+
+
+           
         </Grid>
 
+        <StatusBar  Grid.Row ="2" Height="30" 
+                    Background="{Binding Window.Background}"
+                    VerticalAlignment="Bottom" HorizontalAlignment="Stretch" 
+                    FontSize="12" Padding="0,4,0,0">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0" Margin="2,1,0,0">
+                <fa:FontAwesome Name="StatusIcon" Icon="Circle" Foreground="Green"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <TextBlock Width="400" Name="StatusText" x:FieldModifier="public" HorizontalAlignment="Left">Ready</TextBlock>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </controls:MetroWindow>

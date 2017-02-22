@@ -447,7 +447,7 @@ namespace Westwind.wwScripting
             catch (Exception ex) 
 			{
 				Error = true;
-				ErrorMessage = ex.Message;
+				ErrorMessage = ex.GetBaseException().Message;
 			}
 			return null;
 		}
