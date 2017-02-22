@@ -57,6 +57,7 @@ namespace CommanderAddin
         }
         private bool _openSourceInEditorOnErrors;
 
+        
         public ObservableCollection<CommanderCommand> Commands
         {
             get { return _commands; }

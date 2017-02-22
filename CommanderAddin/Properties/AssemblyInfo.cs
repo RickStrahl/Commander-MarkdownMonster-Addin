@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MarkdownMonsterAddinTemplate")]
+[assembly: AssemblyTitle("Commander Addin for Markdown Monster")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Rick Strahl")]
-[assembly: AssemblyProduct("MarkdownMonsterAddinTemplate")]
-[assembly: AssemblyCopyright("Copyright © Rick Strahl 2017")]
+[assembly: AssemblyCompany("Rick Strahl, West Wind Technologies")]
+[assembly: AssemblyProduct("Markdown Monster")]
+[assembly: AssemblyCopyright("© Rick Strahl, West Wind Technologies 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
