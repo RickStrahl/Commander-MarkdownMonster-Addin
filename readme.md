@@ -7,12 +7,31 @@
 > #### Pre-release 
 > This addin is currently in alpha state and only available in source code format.
 
-This add-in lets you extend Markdown Monster via custom C# scripts or external executable that can be tied to a hotkey or can be executed via the Commander addin's user interface. Commander scripts can be thought of as mini add-ins that can be created without requiring a full addin.
+This add-in lets you extend Markdown Monster via custom C# scripts or by easily calling external executables that can be tied to a hotkey or can be executed via the Commander addin's user interface. Commander scripts can be thought of as mini add-ins that can be created without requiring the creation of a full blown addin using small snippets of C# Script code.
+
+### Features
+Commander has the following  useful features:
+
+* C# Scripting - full C# language access
+* Reference and Namespace imports
+* Access to Markdown Monster's Model
+    * Access to Document
+    * Access to Editor
+    * Access to Window and WPF UI
+* Console Output for Debugging
+
+### What can you do with it?
+Heck the sky's the limit, but here are some simple things I've done with it just in the last couple of weeks:
+
+* Open my Git Client in the right folder context
+* Open all related documents
+* Launch an image optimizer to optimize all images
 
 ### Simple Examples
-The following script runs some arbitrary code and displays a message box:
+The following script in the figure retrieves the active document's filename, then shows a directory listing of Markdown Files in the same folder in the Console, and then asks if you want to open the listed files in the editor:
 
 ![](CommanderAddin/screenshot.png)
+
 
 You can also launch external code easily. For example to launch my Git client (SmartGit) in the repo for the current document I can do:
 
