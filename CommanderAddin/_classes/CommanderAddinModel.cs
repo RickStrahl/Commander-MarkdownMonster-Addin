@@ -82,19 +82,19 @@ namespace CommanderAddin
         /// <summary>
         /// Instance of the currently active Markdown Document object
         /// </summary>
-        public MarkdownDocument ActiveDocument => AppModel.ActiveDocument;
+        public MarkdownDocument ActiveDocument => AppModel?.ActiveDocument;
 
 
         /// <summary>
         /// Instance of the Markdown Editor browser and ACE Editor instance
         /// </summary>
-        public MarkdownDocumentEditor ActiveEditor => AppModel.ActiveEditor;
+        public MarkdownDocumentEditor ActiveEditor => AppModel?.ActiveEditor;
 
 
         /// <summary>
         /// List of all the open document objects in the editor
         /// </summary>
-        public List<MarkdownDocument> OpenDocuments => AppModel.OpenDocuments;
+        public List<MarkdownDocument> OpenDocuments => AppModel?.OpenDocuments;
 
 
         #region INotifyPropertyChanged        

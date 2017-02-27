@@ -45,8 +45,7 @@ namespace CommanderAddin
             };
 
             // if you don't want to display config or main menu item clear handler
-            //menuItem.ExecuteConfiguration = null;
-
+            //menuItem.ExecuteConfiguration = null;                
             // Must add the menu to the collection to display menu and toolbar items            
             this.MenuItems.Add(menuItem);
         }
@@ -62,10 +61,7 @@ namespace CommanderAddin
 
                 commanderWindow.Top = Model.Window.Top;
                 commanderWindow.Left = Model.Window.Left + Model.Window.Width -
-                                      Model.Configuration.WindowPosition.SplitterPosition;
-
-                
- 
+                                      Model.Configuration.WindowPosition.SplitterPosition;                
             }
             commanderWindow.Show();
             commanderWindow.Activate();
@@ -152,7 +148,7 @@ namespace CommanderAddin
             using (var process = Process.GetCurrentProcess())
             {                                
                 var parser = new ScriptParser();            
-                if (!parser.EvaluateScriptRoslyn(code, AddinModel))
+                if (!parser.EvaluateScript(code, AddinModel))
                 {
 
                     Console.WriteLine("*** Error running Script code:\r\n" + 
