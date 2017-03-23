@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="hsizegrip.png" />
+    <Resource Include="icon_22.png" />
     <Content Include="version.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

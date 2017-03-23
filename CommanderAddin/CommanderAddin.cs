@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using FontAwesome.WPF;
 using MarkdownMonster;
@@ -30,7 +31,6 @@ namespace CommanderAddin
                 Addin = this
             };
 
-
             base.OnApplicationStart();
 
             Id = "Commander";
@@ -43,6 +43,12 @@ namespace CommanderAddin
                 FontawesomeIcon = FontAwesomeIcon.Terminal,
                 KeyboardShortcut = CommanderAddinConfiguration.Current.KeyboardShortcut
             };
+            try
+            {
+                menuItem.IconImageSource = new ImageSourceConverter()
+                        .ConvertFromString("pack://application:,,,/CommanderAddin;component/icon_22.png") as ImageSource;
+            }
+            catch { }
 
             // if you don't want to display config or main menu item clear handler
             //menuItem.ExecuteConfiguration = null;                
