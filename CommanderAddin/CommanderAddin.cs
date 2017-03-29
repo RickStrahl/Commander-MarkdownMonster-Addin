@@ -77,7 +77,7 @@ namespace CommanderAddin
 
         public override void OnExecuteConfiguration(object sender)
         {
-            Model.Window.OpenTab(Path.Combine(mmApp.Configuration.CommonFolder, "CommanderAddin.json"));            
+            OpenTab(Path.Combine(mmApp.Configuration.CommonFolder, "CommanderAddin.json"));            
         }
 
         public override bool OnCanExecute(object sender)
@@ -160,19 +160,11 @@ namespace CommanderAddin
                     Console.WriteLine("*** Error running Script code:\r\n" + 
                                       parser.ErrorMessage);
                     
-                    //if (MessageBox.Show(parser.ErrorMessage +
-                    //                    "\r\n\r\n" +
-                    //                    "Do you want to display the generated source?",
-                    //        "Snippet Execution failed",
-                    //        MessageBoxButton.YesNo,
-                    //        MessageBoxImage.Exclamation,
-                    //        MessageBoxResult.No) == MessageBoxResult.Yes)
-                    //{
                     if (CommanderAddinConfiguration.Current.OpenSourceInEditorOnErrors)
                     {
                         string fname = Path.Combine(Path.GetTempPath(), "Commander_Compiled_Code.cs");
                         File.WriteAllText(fname, parser.ScriptInstance.SourceCode);
-                        var tab = Model.Window.OpenTab(fname);
+                        var tab = OpenTab(fname);
                         File.Delete(fname);
 
                         if (tab != null)
