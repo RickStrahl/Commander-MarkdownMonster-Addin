@@ -28,7 +28,7 @@ namespace CommanderAddin
 
             if (Model.AddinConfiguration.Commands == null || Model.AddinConfiguration.Commands.Count < 1)
             {
-                Model.AddinConfiguration.Commands = new System.Collections.ObjectModel.ObservableCollection<CommanderCommand>();
+                Model.AddinConfiguration.Commands = new ObservableCollection<CommanderCommand>();
                 Model.AddinConfiguration.Commands.Add(new CommanderCommand
                 {
                     Name = "Copyright Notice",

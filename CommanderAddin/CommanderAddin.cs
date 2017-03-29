@@ -16,7 +16,7 @@ using MarkdownMonster.Windows;
 
 namespace CommanderAddin
 {
-    public class CommanderAddin : MarkdownMonster.AddIns.MarkdownMonsterAddin
+    public class CommanderAddin : MarkdownMonsterAddin
     {
 
         private CommanderWindow commanderWindow;
@@ -53,7 +53,7 @@ namespace CommanderAddin
             // if you don't want to display config or main menu item clear handler
             //menuItem.ExecuteConfiguration = null;                
             // Must add the menu to the collection to display menu and toolbar items            
-            this.MenuItems.Add(menuItem);
+            MenuItems.Add(menuItem);
         }
 
         public override void OnExecute(object sender)
