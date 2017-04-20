@@ -112,7 +112,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition  Height="*"/>
                 <RowDefinition Height="22" />
-                <RowDefinition Height="90" />
+                <RowDefinition Height="110" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Margin="0,0,0,4">Command Name</TextBlock>
             <TextBox  Grid.Row="1" Text="{Binding ActiveCommand.Name, UpdateSourceTrigger=PropertyChanged }" />
@@ -151,10 +151,12 @@
                     </ControlTemplate>
                 </GridSplitter.Template>
             </GridSplitter>
-            <TextBox Name="TextConsole" Grid.Row="6" FontFamily="Consolas" FontSize="16" Background="#292929" BorderThickness="0"></TextBox>
-
-
-           
+            <TextBox Name="TextConsole" Grid.Row="6" 
+                     FontFamily="Consolas"
+                     FontSize="14" 
+                     Background="#292929" 
+                     Margin="0,0,0,-12"
+                     BorderThickness="0"></TextBox>
         </Grid>
 
         <StatusBar  Grid.Row ="2" Height="30" 

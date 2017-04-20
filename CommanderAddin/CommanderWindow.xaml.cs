@@ -16,6 +16,8 @@ namespace CommanderAddin
     public partial class CommanderWindow
     {
         public CommanderAddinModel Model { get; set; }
+
+        private bool pageLoaded = false;
         
         public CommanderWindow(CommanderAddin addin)
         {
@@ -48,6 +50,7 @@ namespace CommanderAddin
             WebBrowserCommand.Visibility = Visibility.Hidden;
 
             DataContext = Model;            
+
         }      
 
         private MarkdownEditorSimple editor;
@@ -55,10 +58,20 @@ namespace CommanderAddin
         private void CommandsWindow_Loaded(object sender, RoutedEventArgs e)
         {
             string initialValue = null;
+
             if (Model.AddinConfiguration.Commands.Count > 0)
             {
-                ListCommands.SelectedItem = Model.AddinConfiguration.Commands[0];
-                initialValue = Model.AddinConfiguration.Commands[0].CommandText;
+                CommanderCommand selectedItem = null;
+                if (!string.IsNullOrEmpty(CommanderAddinConfiguration.Current.LastCommand))
+                    selectedItem =
+                        Model.AddinConfiguration.Commands.FirstOrDefault(
+                            cmd => cmd.Name == Model.AddinConfiguration.LastCommand);
+                else
+                    selectedItem = Model.AddinConfiguration.Commands[0];
+
+                ListCommands.SelectedItem = selectedItem;
+                if (selectedItem != null)
+                    initialValue = selectedItem.CommandText;
             }
 
             editor = new MarkdownEditorSimple(WebBrowserCommand, initialValue);            
@@ -76,6 +89,8 @@ namespace CommanderAddin
                 ListCommands.Focus();
                 editor.SetEditorSyntax("csharp");                
             },System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+
+            pageLoaded = true;
         }
 
 
@@ -134,14 +149,23 @@ namespace CommanderAddin
 
         private void ListCommands_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!pageLoaded)
+                return;
+
             var command = ListCommands.SelectedItem as CommanderCommand;
-
-
             if (command != null)
             {
-                try { 
+                try
+                {
                     editor?.SetMarkdown(command.CommandText);
-                }catch { }}
+                }
+                catch
+                {
+                }
+                CommanderAddinConfiguration.Current.LastCommand = command.Name;
+            }
+
+            
         }
 
 

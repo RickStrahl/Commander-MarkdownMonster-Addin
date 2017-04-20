@@ -2,6 +2,15 @@
 
 # Change Log Commander Addin for Markdown Monster 
 
+### 0.3
+<i><small>not released yet</small></i>
+
+* **Remember Last Command Used**  
+The Addin now remembers which comman was last selected and restores it when the dialog is restarted so you can more easily re-run your last command.
+
+* **Fix Console Output to scroll to Bottom**  
+Change behavior of the console to always display the end of the console output by scrolling the textbox to the bottom.
+
 ### 0.2
 <i><small>February 22, 2017</small></i>
 

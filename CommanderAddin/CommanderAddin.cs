@@ -157,8 +157,7 @@ namespace CommanderAddin
                 if (!parser.EvaluateScript(code, AddinModel))
                 {
 
-                    Console.WriteLine("*** Error running Script code:\r\n" + 
-                                      parser.ErrorMessage);
+                    Console.WriteLine($"*** Error running Script code:\r\n{parser.ErrorMessage}");
                     
                     if (CommanderAddinConfiguration.Current.OpenSourceInEditorOnErrors)
                     {
@@ -199,20 +198,20 @@ namespace CommanderAddin
 
     public class ConsoleTextWriter : TextWriter
     {
-        public TextBox tbox;        
+        public TextBox tbox;
 
         public override void Write(char value)
-        {                                            
-                tbox.Text += value;                
-                tbox.ScrollToEnd();        
-                if (value == '\n')
-                    WindowUtilities.DoEvents();
+        {
+            tbox.Text += value;
+            if (value == '\n')
+                Dispatcher.CurrentDispatcher.Delay(1,(s)=>tbox.ScrollToEnd());
         }
 
         public override void Write(string value)
         {
             base.Write(value);
             WindowUtilities.DoEvents();
+            tbox.ScrollToEnd();
         }
 
         public override Encoding Encoding

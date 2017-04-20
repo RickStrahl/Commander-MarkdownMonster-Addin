@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text;
 using MarkdownMonster;
 using MarkdownMonster.Annotations;
 
@@ -95,6 +98,42 @@ namespace CommanderAddin
         /// List of all the open document objects in the editor
         /// </summary>
         public List<MarkdownDocument> OpenDocuments => AppModel?.OpenDocuments;
+
+        public bool ExecuteProcess(string executable, string arguments, int timeoutMs = 5000)
+        {
+            var process = new Process();
+            process.StartInfo.FileName = executable;
+            process.StartInfo.Arguments = arguments;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+            process.StartInfo.UseShellExecute = false;
+           
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.OutputDataReceived += (sender, args) =>
+            {
+                Console.WriteLine(args.Data);
+            };
+            process.ErrorDataReceived += (sender, args) =>
+            {
+                Console.WriteLine(args.Data);
+            };
+
+            var pi = process.Start();
+            //process.BeginOutputReadLine();
+
+
+            if (!process.WaitForExit(timeoutMs))
+            {
+                Console.WriteLine("Process timed out.");
+                return false;
+            }
+
+            return process.ExitCode == 0;
+
+        }
+
 
 
         #region INotifyPropertyChanged        

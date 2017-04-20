@@ -57,7 +57,10 @@ namespace CommanderAddin
         }
         private bool _openSourceInEditorOnErrors;
 
-        
+
+        /// <summary>
+        /// List of all the commands stored on this configuration
+        /// </summary>
         public ObservableCollection<CommanderCommand> Commands
         {
             get { return _commands; }
@@ -69,6 +72,23 @@ namespace CommanderAddin
             }
         }
         private ObservableCollection<CommanderCommand> _commands = new ObservableCollection<CommanderCommand>();
+
+        
+
+        /// <summary>
+        /// Last command used so it can be restored when we restart
+        /// </summary>
+        public string LastCommand
+        {
+            get { return _lastCommand; }
+            set
+            {
+                if (Equals(value, _lastCommand)) return;
+                _lastCommand = value;
+                OnPropertyChanged(nameof(LastCommand));
+            }
+        }
+        private string _lastCommand;
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
