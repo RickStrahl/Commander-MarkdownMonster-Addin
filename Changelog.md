@@ -8,6 +8,9 @@
 * **Error Messages in main Status Bar**   
 Command execution now shows a confirmation or failure message in the main window's status bar so you can see that something is happening when the Commander window is not open. 
 
+* **Add default Scripts for HelloWorld and Push to Git**  
+Added two default scripts that demonstrate basic operation of the addin, one to run a loop and output a string, one to execute a Git to stage, commit and push the current document to Git.
+
 * **Fix: Execution off shortcut key without Window Open**  
 This fixes an issue where you couldn't successfully execute an addin that used the Model when the Command Window wasn't open. Model data is now properly passed even if the Window has not been opened.
 
