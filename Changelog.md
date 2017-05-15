@@ -3,10 +3,10 @@
 # Change Log Commander Addin for Markdown Monster 
 
 ### 0.3
-<i><small>May 15th, 2017</small></i>
+<i><small>May 14th, 2017</small></i>
 
 * **Remember Last Command Used**  
-The Addin now remembers which comman was last selected and restores it when the dialog is restarted so you can more easily re-run your last command.
+The Addin now remembers which common was last selected and restores it when the dialog is restarted so you can more easily re-run your last command.
 
 * **Error Messages in main Status Bar**   
 Command execution now shows a confirmation or failure message in the main window's status bar so you can see that something is happening when the Commander window is not open. 
