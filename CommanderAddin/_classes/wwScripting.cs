@@ -23,7 +23,7 @@ namespace Westwind.wwScripting
 		/// <summary>
 		/// Compiler object used to compile our code
 		/// </summary>
-		protected ICodeCompiler Compiler = null;
+		protected CodeDomProvider CodeProvider = null;
 
 		/// <summary>
 		/// Reference to the Compiler Parameter object
@@ -129,14 +129,15 @@ namespace Westwind.wwScripting
 		{
 			ScriptingLanguage = language;
 
-			if (ScriptingLanguage == "CSharp" || ScriptingLanguage == "C#") 
+			if (ScriptingLanguage == "CSharp" || ScriptingLanguage == "C#")
 			{
-				Compiler = new CSharpCodeProvider().CreateCompiler();
+				
+				CodeProvider = new CSharpCodeProvider();
 				ScriptingLanguage = "CSharp";
 			}	
-			else if (ScriptingLanguage == "VB")	
+			else if (ScriptingLanguage == "VB")
 			{
-				Compiler = new VBCodeProvider().CreateCompiler();
+				CodeProvider = new VBCodeProvider();
 			}										   
 			// else throw(Exception ex);
 
@@ -346,8 +347,10 @@ namespace Westwind.wwScripting
 			else {
 				  Parameters.OutputAssembly = OutputAssembly;
 			}
-		
-			CompilerResults = Compiler.CompileAssemblyFromSource(Parameters,source);
+
+						
+
+			CompilerResults = CodeProvider.CompileAssemblyFromSource(Parameters,source);
 
 			if (CompilerResults.Errors.HasErrors) 
 			{

@@ -31,12 +31,50 @@ namespace CommanderAddin
             if (Model.AddinConfiguration.Commands == null || Model.AddinConfiguration.Commands.Count < 1)
             {
                 Model.AddinConfiguration.Commands = new ObservableCollection<CommanderCommand>();
-                Model.AddinConfiguration.Commands.Add(new CommanderCommand
-                {
-                    Name = "Copyright Notice",
-                });
-            }
-            else
+                Model.AddinConfiguration.Commands.Add(
+		            new CommanderCommand
+		            {
+			            Name = "Console Test",
+			            CommandText = @"
+for(int x = 1;  x < 10; x++) {
+    Console.WriteLine(""Hello World "" + x.ToString());
+}"
+					});
+	            Model.AddinConfiguration.Commands.Add(
+		            new CommanderCommand
+		            {
+			            Name = "Git Commit Active Document",
+						KeyboardShortcut = "Alt-Shift-G",
+			            CommandText = @"
+// ASSSUMES: Git is in your system path. Otherwise add path here
+var gitExe = ""git.exe"";
+
+var doc = Model.ActiveDocument.Filename;
+var docFile = Path.GetFileName(doc);
+var docPath = Path.GetDirectoryName(doc);
+
+Directory.SetCurrentDirectory(docPath);
+
+Console.WriteLine(""Staging "" + docFile);
+int result = Model.ExecuteProcess(gitExe, ""add --force -- \"""" + docFile + ""\"""");
+Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to stage. Exit Code: "" + result);
+
+Console.WriteLine(""Committing..."");
+result = Model.ExecuteProcess(gitExe, ""commit -m \""Updating documentation for "" + docFile + ""\"""");
+Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to commit. Exit Code: "" + result);
+
+if (result != 0)
+return null;
+
+Console.WriteLine(""Pushing..."");
+result = Model.ExecuteProcess(gitExe, ""push --porcelain --progress --recurse-submodules=check origin refs/heads/master:refs/heads/master"");
+Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" + result);
+"
+
+					});
+
+			}
+			else
             {
                 Model.AddinConfiguration.Commands =
                     new ObservableCollection<CommanderCommand>(Model.AddinConfiguration.Commands.OrderBy(snip => snip.Name));

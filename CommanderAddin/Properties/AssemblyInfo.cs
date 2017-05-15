@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Commander Addin for Markdown Monster")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Commander C# Script Execution Addin for Markdown Monster")]
+[assembly: AssemblyDescription("This addin allows creation of small C# based scripts that can be executed in Markdown Monster through the Addin's UI or via configured shortcut keys.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rick Strahl, West Wind Technologies")]
 [assembly: AssemblyProduct("Markdown Monster")]
@@ -32,4 +32,4 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.2.7")]
+[assembly: AssemblyVersion("0.3.8")]

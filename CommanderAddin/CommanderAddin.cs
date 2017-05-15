@@ -56,14 +56,14 @@ namespace CommanderAddin
             MenuItems.Add(menuItem);
         }
 
-        public override void OnExecute(object sender)
+		#region Addin Implementation Methods
+		public override void OnExecute(object sender)
         {
             if(commanderWindow == null || !commanderWindow.IsLoaded)
             {
-                AddinModel.Window = Model.Window;
-                AddinModel.AppModel = Model;                
-                
-                commanderWindow = new CommanderWindow(this);
+                InitializeAddinModel();
+
+	            commanderWindow = new CommanderWindow(this);
 
                 commanderWindow.Top = Model.Window.Top;
                 commanderWindow.Left = Model.Window.Left + Model.Window.Width -
@@ -75,7 +75,13 @@ namespace CommanderAddin
             
         }
 
-        public override void OnExecuteConfiguration(object sender)
+	    private void InitializeAddinModel()
+	    {
+		    AddinModel.Window = Model.Window;
+		    AddinModel.AppModel = Model;
+	    }
+
+	    public override void OnExecuteConfiguration(object sender)
         {
             OpenTab(Path.Combine(mmApp.Configuration.CommonFolder, "CommanderAddin.json"));            
         }
@@ -86,115 +92,139 @@ namespace CommanderAddin
         }
 
 
-        public override void OnWindowLoaded()
-        {
-            foreach (var command in CommanderAddinConfiguration.Current.Commands)
-            {
+	    public override void OnWindowLoaded()
+	    {
+		    foreach (var command in CommanderAddinConfiguration.Current.Commands)
+		    {
 
-                if (!string.IsNullOrEmpty(command.KeyboardShortcut))
-                {
-                    var ksc = command.KeyboardShortcut.ToLower();
-                    KeyBinding kb = new KeyBinding();
+			    if (!string.IsNullOrEmpty(command.KeyboardShortcut))
+			    {
+				    var ksc = command.KeyboardShortcut.ToLower();
+				    KeyBinding kb = new KeyBinding();
 
-                    if (ksc.Contains("alt"))
-                        kb.Modifiers = ModifierKeys.Alt;
-                    if (ksc.Contains("shift"))
-                        kb.Modifiers |= ModifierKeys.Shift;
-                    if (ksc.Contains("ctrl") || ksc.Contains("ctl"))
-                        kb.Modifiers |= ModifierKeys.Control;
+				    if (ksc.Contains("alt"))
+					    kb.Modifiers = ModifierKeys.Alt;
+				    if (ksc.Contains("shift"))
+					    kb.Modifiers |= ModifierKeys.Shift;
+				    if (ksc.Contains("ctrl") || ksc.Contains("ctl"))
+					    kb.Modifiers |= ModifierKeys.Control;
 
-                    string key =
-                        ksc.Replace("+", "")
-                            .Replace("-", "")
-                            .Replace("_", "")
-                            .Replace(" ", "")
-                            .Replace("alt", "")
-                            .Replace("shift", "")
-                            .Replace("ctrl", "")
-                            .Replace("ctl", "");
+				    string key =
+					    ksc.Replace("+", "")
+						    .Replace("-", "")
+						    .Replace("_", "")
+						    .Replace(" ", "")
+						    .Replace("alt", "")
+						    .Replace("shift", "")
+						    .Replace("ctrl", "")
+						    .Replace("ctl", "");
 
-                    key = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(key);
-                    if (!string.IsNullOrEmpty(key))
-                    {
-                        KeyConverter k = new KeyConverter();
-                        kb.Key = (Key)k.ConvertFromString(key);
-                    }
+				    key = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(key);
+				    if (!string.IsNullOrEmpty(key))
+				    {
+					    KeyConverter k = new KeyConverter();
+					    kb.Key = (Key)k.ConvertFromString(key);
+				    }
 
-                    // Whatever command you need to bind to
-                    kb.Command = new CommandBase((s, e) => RunCommand(command),
-                                                 (s, e) => Model.IsEditorActive);
+				    // Whatever command you need to bind to
+				    kb.Command = new CommandBase((s, e) => RunCommand(command),
+					    (s, e) => Model.IsEditorActive);
 
-                    Model.Window.InputBindings.Add(kb);
-                }
-            }
-        }
+				    Model.Window.InputBindings.Add(kb);
+			    }
+		    }
+	    }
 
-        public override void OnApplicationShutdown()
-        {
-            commanderWindow?.Close();
-        }
+	    public override void OnApplicationShutdown()
+	    {
+		    commanderWindow?.Close();
+	    }
+
+		#endregion
+
+		
+		public void RunCommand(CommanderCommand command)
+	    {
+		    if (AddinModel.AppModel == null)
+			    InitializeAddinModel();
+
+		    string code = command.CommandText;
+
+		    bool showConsole = commanderWindow != null && commanderWindow.Visibility == Visibility.Visible;
+		    if (showConsole)
+		    {
+			    var tbox = commanderWindow.TextConsole;
+			    tbox.Clear();
+
+			    WindowUtilities.DoEvents();
+
+			    Console.SetOut(new ConsoleTextWriter()
+			    {
+				    tbox = tbox
+			    });
+
+		    }
+
+		    var parser = new ScriptParser();
+		    if (!parser.EvaluateScript(code, AddinModel))
+		    {
+			    if (!showConsole)
+			    {
+				    AddinModel.Window.ShowStatus("*** Addin execution failed: " + parser.ErrorMessage, 6000);
+				    AddinModel.Window.SetStatusIcon(FontAwesomeIcon.Warning, Colors.Red);
+			    }
+			    else
+				    Console.WriteLine($"*** Error running Script code:\r\n{parser.ErrorMessage}");
+
+			    if (CommanderAddinConfiguration.Current.OpenSourceInEditorOnErrors)
+			    {
+				    string fname = Path.Combine(Path.GetTempPath(), "Commander_Compiled_Code.cs");
+				    File.WriteAllText(fname, parser.ScriptInstance.SourceCode);
+
+				    var tab = OpenTab(fname);
+				    File.Delete(fname);
+
+				    if (tab != null)
+				    {
+					    var editor = tab.Tag as MarkdownDocumentEditor;
+					    editor.SetEditorSyntax("csharp");
+					    editor.SetMarkdown(parser.ScriptInstance.SourceCode);
+
+					    Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+					    {
+						    if (editor.AceEditor == null)
+							    Task.Delay(400);
+						    editor.AceEditor.setshowlinenumbers(true);
+
+						    if (commanderWindow == null)
+						    {
+							    commanderWindow = new CommanderWindow(this);
+							    commanderWindow.Show();
+						    }
+						    else
+							    commanderWindow.Activate();
+
+					    }, DispatcherPriority.ApplicationIdle);
+				    }
+			    }
+		    }
+		    else
+		    {
+			    AddinModel.Window.ShowStatus("Command execution for " + command.Name + " completed successfully",6000);
+		    }
 
 
-        public void RunCommand(CommanderCommand command)
-        {
-            string code = command.CommandText;
-            
-            bool showConsole = commanderWindow != null && commanderWindow.Visibility == Visibility.Visible;
-            if (showConsole)
-            {
-                var tbox = commanderWindow.TextConsole;
-                tbox.Clear();
-                Console.SetOut(new ConsoleTextWriter()
-                {
-                    tbox = tbox
-                });
-                
-            }
+		    if (showConsole)
+		    {
+			    commanderWindow.TextConsole.ScrollToHome();
+			    StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
+			    standardOutput.AutoFlush = true;
+			    Console.SetOut(standardOutput);
+		    }
+	    }
 
-            using (var process = Process.GetCurrentProcess())
-            {                                
-                var parser = new ScriptParser();            
-                if (!parser.EvaluateScript(code, AddinModel))
-                {
-
-                    Console.WriteLine($"*** Error running Script code:\r\n{parser.ErrorMessage}");
-                    
-                    if (CommanderAddinConfiguration.Current.OpenSourceInEditorOnErrors)
-                    {
-                        string fname = Path.Combine(Path.GetTempPath(), "Commander_Compiled_Code.cs");
-                        File.WriteAllText(fname, parser.ScriptInstance.SourceCode);
-                        var tab = OpenTab(fname);
-                        File.Delete(fname);
-
-                        if (tab != null)
-                        {
-                            var editor = tab.Tag as MarkdownDocumentEditor;
-                            editor.SetEditorSyntax("csharp");
-                            editor.SetMarkdown(parser.ScriptInstance.SourceCode);
-
-                            Dispatcher.CurrentDispatcher.InvokeAsync(() =>
-                            {
-                                if (editor.AceEditor == null)
-                                    Task.Delay(400);
-                                editor.AceEditor.setshowlinenumbers(true);
-
-                                commanderWindow.Activate();
-
-                            }, DispatcherPriority.ApplicationIdle);
-                        }
-                    }
-                }
-            }
-
-            if (showConsole)
-            {
-                commanderWindow.TextConsole.ScrollToHome();
-                StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
-                standardOutput.AutoFlush = true;
-                Console.SetOut(standardOutput);
-            }
-        }
-    }
+	    
+	}
 
     public class ConsoleTextWriter : TextWriter
     {
