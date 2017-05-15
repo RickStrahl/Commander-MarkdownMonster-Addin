@@ -2,8 +2,11 @@
 
 # Change Log Commander Addin for Markdown Monster 
 
-### 0.4
-<i><small>not released yet</small></i>
+### 0.3
+<i><small>May 15th, 2017</small></i>
+
+* **Remember Last Command Used**  
+The Addin now remembers which comman was last selected and restores it when the dialog is restarted so you can more easily re-run your last command.
 
 * **Error Messages in main Status Bar**   
 Command execution now shows a confirmation or failure message in the main window's status bar so you can see that something is happening when the Commander window is not open. 
@@ -11,17 +14,11 @@ Command execution now shows a confirmation or failure message in the main window
 * **Add default Scripts for HelloWorld and Push to Git**  
 Added two default scripts that demonstrate basic operation of the addin, one to run a loop and output a string, one to execute a Git to stage, commit and push the current document to Git.
 
-* **Fix: Execution off shortcut key without Window Open**  
-This fixes an issue where you couldn't successfully execute an addin that used the Model when the Command Window wasn't open. Model data is now properly passed even if the Window has not been opened.
-
-### 0.3
-<i><small>March 10th, 2017</small></i>
-
-* **Remember Last Command Used**  
-The Addin now remembers which comman was last selected and restores it when the dialog is restarted so you can more easily re-run your last command.
-
 * **Fix Console Output to scroll to Bottom**  
 Change behavior of the console to always display the end of the console output by scrolling the textbox to the bottom.
+
+* **Fix: Execution off shortcut key without Window Open**  
+This fixes an issue where you couldn't successfully execute an addin that used the Model when the Command Window wasn't open. Model data is now properly passed even if the Window has not been opened.
 
 ### 0.2
 <i><small>February 22, 2017</small></i>
