@@ -117,8 +117,10 @@ namespace CommanderAddin
 			        process.StartInfo.FileName = executable;
 			        process.StartInfo.Arguments = arguments;
 			        process.StartInfo.WindowStyle = windowStyle;
+                    if (windowStyle == ProcessWindowStyle.Hidden)
+                        process.StartInfo.CreateNoWindow = true;
 
-			        process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.UseShellExecute = false;
 
 			        process.StartInfo.RedirectStandardOutput = true;
 			        process.StartInfo.RedirectStandardError = true;
