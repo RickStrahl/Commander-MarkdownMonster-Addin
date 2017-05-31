@@ -106,7 +106,7 @@ namespace CommanderAddin
 		/// <param name="arguments">Command line arguments</param>
 		/// <param name="timeoutMs">Timeout of the process in milliseconds. Pass -1 to wait forever. Pass 0 to not wait.</param>
 		/// <returns>Process exit code. 0 on success, anything else error. 1460 timed out</returns>
-		public int ExecuteProcess(string executable, string arguments, int timeoutMs = 60000)
+		public int ExecuteProcess(string executable, string arguments, int timeoutMs = 60000, ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
         {
 	        Process process;
 
@@ -116,7 +116,7 @@ namespace CommanderAddin
 		        {
 			        process.StartInfo.FileName = executable;
 			        process.StartInfo.Arguments = arguments;
-			        process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+			        process.StartInfo.WindowStyle = windowStyle;
 
 			        process.StartInfo.UseShellExecute = false;
 
@@ -156,8 +156,6 @@ namespace CommanderAddin
 		        Console.WriteLine("Error executing process: " + ex.Message);
 		        return -1; // unhandled error
 	        }
-
-	        
         }
 
 

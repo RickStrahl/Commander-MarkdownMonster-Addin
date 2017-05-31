@@ -1,11 +1,11 @@
 ﻿{
     "id": "Commander",
-    "name": "Commander: C# Script Execution (Beta)",    
+    "name": "Commander: C# Script Execution",    
     "summary": "Create small C# based scripts to automate many operations in Markdown Monster. Launch external tools, update documents, merge data into the editor and more.",
     "description": "Use this add-in to create add-in like behavior without the overhead. Use C# code to automate operations inside of Markdown Monster and tie the script to a hotkey. Some examples of you might do includes launching external tools (say your Git Client or Git Command Line), importing and merging data, creating custom content to various services and much more.\r\n\r\nWith full access to C# code, the sky's the limit with what you can accomplish.", 
     "releaseNotes": null,
-    "version": "0.3",
+    "version": "0.3.9",
     "minversion": "1.2.18",
     "author": "© Rick Strahl, West Wind Technologies",
-    "updated": "2017-5-15T12:00:00Z"
+    "updated": "2017-06-01T12:00:00Z"
 }
