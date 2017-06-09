@@ -89,10 +89,8 @@
             </ToolBarPanel>
 
 
-        <ListBox Grid.Row="1" Grid.Column="0" Name="ListCommands"
-                             Background="#333"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                             
+        <ListBox Grid.Row="1" Grid.Column="0" Name="ListCommands"                             
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"                             
                              ItemsSource="{Binding AddinConfiguration.Commands}"  
                              SelectedItem="{Binding ActiveCommand}"
                              DisplayMemberPath="Name"
@@ -143,7 +141,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Foreground="#cccccc"  Padding="0,2,0,0">Console output</TextBlock>
+                                <TextBlock Grid.Column="0" Opacity="0.80"  Padding="0,2,0,0">Console output</TextBlock>
                                 <Image Grid.Column="0" Source="hsizegrip.png" Width="30" HorizontalAlignment="Center" />
                             </Grid>
 
@@ -154,8 +152,7 @@
             <TextBox Name="TextConsole" Grid.Row="6" 
                      FontFamily="Consolas"
                      FontSize="14" 
-                     Background="#292929" 
-                     Margin="0,0,0,-12"
+                     Background="#292929" Foreground="#ddd"                     
                      BorderThickness="0"></TextBox>
         </Grid>
 
