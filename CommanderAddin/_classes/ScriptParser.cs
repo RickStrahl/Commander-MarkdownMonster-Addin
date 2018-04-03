@@ -81,7 +81,7 @@ namespace CommanderAddin
                             return false;
                         }
 
-                        var fullAssemblyName = Path.GetFullPath(assemblyName);
+                        var fullAssemblyName = FileUtils.GetPhysicalPath(assemblyName);
                         if (File.Exists(fullAssemblyName))
                             assemblyName = fullAssemblyName;
 
