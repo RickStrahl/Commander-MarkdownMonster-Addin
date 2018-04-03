@@ -8,6 +8,12 @@
 * **Add WindowStyle flag to ExecuteProcess Helper**   
 Add flag to allow controlling window size and default to hidden, so processes run invisibly.
 
+* **ShortCut Parsing Improvements**  
+Fix a number of edge cases for shortcut maps for commands. Only support single gestures (Ctrl-o, Ctrl-Shift-o, but not Ctrl-O,L) for example.
+
+* **Fix: Load Errors for Key Bindings**  
+Fix the load errors for key bindings and continue loading bindings.
+
 ### 0.3
 <i><small>May 14th, 2017</small></i>
 
