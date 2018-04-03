@@ -99,42 +99,32 @@ namespace CommanderAddin
 
 			    if (!string.IsNullOrEmpty(command.KeyboardShortcut))
 			    {
-				    var ksc = command.KeyboardShortcut.ToLower();
+			        var ksc = command.KeyboardShortcut.ToLower().Replace("-", "+");
 				    KeyBinding kb = new KeyBinding();
 
-				    if (ksc.Contains("alt"))
-					    kb.Modifiers = ModifierKeys.Alt;
-				    if (ksc.Contains("shift"))
-					    kb.Modifiers |= ModifierKeys.Shift;
-				    if (ksc.Contains("ctrl") || ksc.Contains("ctl"))
-					    kb.Modifiers |= ModifierKeys.Control;
-
-				    string key =
-					    ksc.Replace("+", "")
-						    .Replace("-", "")
-						    .Replace("_", "")
-						    .Replace(" ", "")
-						    .Replace("alt", "")
-						    .Replace("shift", "")
-						    .Replace("ctrl", "")
-						    .Replace("ctl", "");
-
-				    key = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(key);
-				    if (!string.IsNullOrEmpty(key))
-				    {
-					    KeyConverter k = new KeyConverter();
-					    kb.Key = (Key)k.ConvertFromString(key);
-				    }
-
-				    // Whatever command you need to bind to
-				    kb.Command = new CommandBase((s, e) => RunCommand(command),
-					    (s, e) => Model.IsEditorActive);
-
-				    Model.Window.InputBindings.Add(kb);
+                    try
+			        {
+                        var gesture = new KeyGestureConverter().ConvertFromString(ksc) as InputGesture;
+                        var cmd = new CommandBase((s, e) => RunCommand(command),
+                            (s, e) => Model.IsEditorActive);
+                        
+			            kb.Gesture = gesture;
+                        
+			            // Whatever command you need to bind to
+			            kb.Command = cmd;
+                        
+			            Model.Window.InputBindings.Add(kb);
+                        
+			        }
+			        catch (Exception ex)
+			        {
+			            mmApp.Log("Commander Addin: Failed to create keyboard binding for: " + ksc + ". " + ex.Message);
+			        }
 			    }
 		    }
 	    }
 
+        
 	    public override void OnApplicationShutdown()
 	    {
 		    commanderWindow?.Close();
@@ -145,6 +135,7 @@ namespace CommanderAddin
 		
 		public void RunCommand(CommanderCommand command)
 	    {
+            
 		    if (AddinModel.AppModel == null)
 			    InitializeAddinModel();
 

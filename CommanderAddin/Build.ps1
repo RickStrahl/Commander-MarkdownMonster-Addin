@@ -25,4 +25,4 @@ copy "$src\icon.png" $tgt
 copy "$src\screenshot.png" $tgt
 
 "Zipping up setup file..."
-7z a -tzip  $tgt\addin.zip $dist\*.*
+.\7z.exe a -tzip  $tgt\addin.zip $dist\*.*

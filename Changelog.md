@@ -2,8 +2,8 @@
 
 # Change Log Commander Addin for Markdown Monster 
 
-### 0.3.9 
-<i><small>not released yet</small></i>
+### 0.3.15 
+<i><small>April 5th, 2018</small></i>
 
 * **Add WindowStyle flag to ExecuteProcess Helper**   
 Add flag to allow controlling window size and default to hidden, so processes run invisibly.

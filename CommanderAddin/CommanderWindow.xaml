@@ -7,8 +7,7 @@
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"                            
-        Title="Commander C# Script Execution " TitleCharacterCasing="Normal"        
-        FontSize="14"                              
+        Title="Commander C# Script Execution " TitleCharacterCasing="Normal"                
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterOwner"         
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
@@ -77,7 +76,7 @@
                     <Button Name="ToolButtonRunSnippet" Click="ToolButtonRunCommand_Click">
                         <StackPanel Orientation="Horizontal">
                             <fa:FontAwesome Icon="Play"  Foreground="Green"
-                                            FontSize="15"                                                                                        
+                                                                                                                                 
                                             FontWeight="Normal" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
                                             Margin="5,2,5,0">
                             </fa:FontAwesome>
@@ -109,7 +108,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition  Height="*"/>
-                <RowDefinition Height="22" />
+                <RowDefinition Height="24" />
                 <RowDefinition Height="110" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Margin="0,0,0,4">Command Name</TextBlock>
@@ -156,10 +155,10 @@
                      BorderThickness="0"></TextBox>
         </Grid>
 
-        <StatusBar  Grid.Row ="2" Height="30" 
+        <StatusBar  Grid.Row ="2"
                     Background="{Binding Window.Background}"
                     VerticalAlignment="Bottom" HorizontalAlignment="Stretch" 
-                    FontSize="12" Padding="0,4,0,0">
+                    Padding="0,4,0,0">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
