@@ -4,8 +4,8 @@
     "summary": "Create small C# based scripts to automate many operations in Markdown Monster. Shell out to external tools, pull in data from external source, update documents, merge data into the editor and more.",
     "description": "Use this add-in to create add-in like behavior without the overhead. Use C# code to automate operations inside of Markdown Monster and tie the script to a hotkey. Some examples of you might do includes launching external tools (say your Git Client or automating a Git command), downloading, importing and merging data, posting custom content to custom services and much more.\r\n\r\nWith full access to C# code, the sky's the limit with what you can accomplish.", 
     "releaseNotes": null,
-    "version": "0.43.2",
-    "minversion": "1.11.12",
-    "author": "© Rick Strahl, West Wind Technologies",
+    "version": "0.43.4",
+    "minversion": "1.13",
+    "author": "© Rick Strahl, West Wind Technologies 2017-2018",
     "updated": "2018-06-07T12:00:00Z"
 }
