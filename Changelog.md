@@ -2,6 +2,16 @@
 
 # Change Log Commander Addin for Markdown Monster 
 
+### 0.44.1
+<i><small>February 8th, 2019</small></i>
+
+* **UI Changes**  
+Updated snippet behavior so that the main window status bar is not updated by default if the snippet succeeds. This allows your snippet to write to the status bar to provide feedback, rather than a generic snippet execution method.
+
+* **Add support for latest C# features**  
+You can now use the latest C# features with the Snippet addin as snippets are now
+compiled using Roslyn. Snippets are also cached now.
+
 ### 0.3.15 
 <i><small>April 5th, 2018</small></i>
 
