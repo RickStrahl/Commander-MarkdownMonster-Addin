@@ -19,6 +19,8 @@ md $dist
 copy "$dlls\*.dll" $dist
 copy "$src\version.json" $dist
 
+del $dist\Microsoft.*.dll
+
 "Copying files for Build folder..."
 copy "$src\version.json" $tgt
 copy "$src\icon.png" $tgt

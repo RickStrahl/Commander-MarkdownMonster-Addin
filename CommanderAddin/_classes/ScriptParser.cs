@@ -36,10 +36,10 @@ namespace CommanderAddin
         
         public string ErrorMessage { get; set; }
 
-        public wwScripting ScriptInstance { get; set; }
+        public wwScriptingRoslyn ScriptInstance { get; set; }
 
 
-        public static Dictionary<string, Assembly> CodeBlocks = new Dictionary<string, Assembly>();
+        public static Dictionary<int, Assembly> CodeBlocks = new Dictionary<int, Assembly>();
 
         /// <summary>
         /// Evaluates the embedded script parsing out {{ C# Expression }} 
@@ -57,10 +57,10 @@ namespace CommanderAddin
             ScriptInstance = CreatewwScripting();
 
 
-            if (CodeBlocks.ContainsKey(code))
+            if (CodeBlocks.ContainsKey(code.GetHashCode()))
             {
                 Debug.WriteLine("wwScripting Cached Code: \r\n" + code);
-                ScriptInstance.ExecuteCodeFromAssembly(code, CodeBlocks[code], model);
+                ScriptInstance.ExecuteCodeFromAssembly(code, CodeBlocks[code.GetHashCode()], model);
             }
             else
             {
@@ -113,7 +113,7 @@ namespace CommanderAddin
                 
                 // cache the generated assembly for reuse on subsequent runs
                 if (ScriptInstance.Assembly != null)
-                    CodeBlocks[code] = ScriptInstance.Assembly;
+                    CodeBlocks[code.GetHashCode()] = ScriptInstance.Assembly;
 
                 Directory.SetCurrentDirectory(oldPath);
             }
@@ -129,9 +129,9 @@ namespace CommanderAddin
         /// with the appropriate assemblies and namespaces set
         /// </summary>
         /// <returns></returns>
-        private static wwScripting CreatewwScripting()
+        private static wwScriptingRoslyn CreatewwScripting()
         {
-            var scripting = new wwScripting()
+            var scripting = new wwScriptingRoslyn()
             {
                 DefaultAssemblies = false,
                 AssemblyNamespace = "MarkdownMonster.Commander.Scripting"

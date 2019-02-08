@@ -54,7 +54,7 @@ namespace Westwind.wwScripting
 		/// For example, you can use CallMethod and pass multiple methods of code each of
 		/// which can be executed indirectly by using CallMethod() on this object reference.
 		/// </summary>
-		public object ObjRef = null;
+		public object ScriptObjectRef = null;
 
 		/// <summary>
 		/// If true saves source code before compiling to the cSourceCode property.
@@ -204,7 +204,7 @@ namespace Westwind.wwScripting
 		public object ExecuteMethod(string code, string methodName, params object[] parameters) 
 		{
 			
-			if (ObjRef == null) 
+			if (ScriptObjectRef == null) 
 			{
 				if (FirstLoad)
 				{
@@ -276,7 +276,7 @@ namespace Westwind.wwScripting
 					return null;
 			}
 
-			return CallMethod(ObjRef,methodName,parameters);
+			return CallMethod(ScriptObjectRef,methodName,parameters);
 		}
 
 		/// <summary>
@@ -313,14 +313,13 @@ namespace Westwind.wwScripting
         /// <returns></returns>
         public object ExecuteCodeFromAssembly(string code, Assembly assembly, params object[] parameters)
         {
-
             Assembly = assembly;
 
             object loTemp = CreateInstance();
             if (loTemp == null)
                 return null;
 
-            return CallMethod(ObjRef, "ExecuteMethod", parameters);
+            return CallMethod(ScriptObjectRef, "ExecuteMethod", parameters);
         }
 
         
@@ -372,9 +371,9 @@ namespace Westwind.wwScripting
 
 		public object CreateInstance() 
 		{
-			if (ObjRef != null) 
+			if (ScriptObjectRef != null) 
 			{
-				return ObjRef;
+				return ScriptObjectRef;
 			}
 			
 			// *** Create an instance of the new object
@@ -383,8 +382,8 @@ namespace Westwind.wwScripting
 				if (AppDomain == null)
 					try 
 					{
-						ObjRef =  Assembly.CreateInstance(AssemblyNamespace + "." + ClassName);
-						return ObjRef;
+						ScriptObjectRef =  Assembly.CreateInstance(AssemblyNamespace + "." + ClassName);
+						return ScriptObjectRef;
 					}
 					catch(Exception ex) 
 					{
@@ -487,7 +486,7 @@ namespace Westwind.wwScripting
 		}
 		public void Release() 
 		{
-			ObjRef = null;
+			ScriptObjectRef = null;
 		}
 
 		public void Dispose() 

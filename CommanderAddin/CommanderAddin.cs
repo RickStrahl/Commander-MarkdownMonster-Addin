@@ -124,8 +124,7 @@ namespace CommanderAddin
 		    }
 	    }
 
-        
-	    public override void OnApplicationShutdown()
+        public override void OnApplicationShutdown()
 	    {
 		    commanderWindow?.Close();
 	    }
