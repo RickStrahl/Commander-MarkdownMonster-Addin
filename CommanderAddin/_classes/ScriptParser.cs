@@ -160,9 +160,13 @@ namespace CommanderAddin
             scripting.AddNamespace("System.Data");
             scripting.AddNamespace("System.Data.SqlClient");
             scripting.AddNamespace("System.Linq");
-            
+            scripting.AddNamespace("System.Windows");
+            scripting.AddNamespace("System.Collections.Generic");            
+
             scripting.AddNamespace("MarkdownMonster");
+            scripting.AddNamespace("MarkdownMonster.Windows");
             scripting.AddNamespace("Westwind.Utilities");
+            
 
             scripting.SaveSourceCode = true;
 

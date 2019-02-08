@@ -13,6 +13,7 @@ using FontAwesome.WPF;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using MarkdownMonster.Windows;
+using Westwind.Utilities;
 
 namespace CommanderAddin
 {
@@ -50,14 +51,27 @@ namespace CommanderAddin
             }
             catch { }
 
+    
+
             // if you don't want to display config or main menu item clear handler
             //menuItem.ExecuteConfiguration = null;                
             // Must add the menu to the collection to display menu and toolbar items            
             MenuItems.Add(menuItem);
         }
 
-		#region Addin Implementation Methods
-		public override void OnExecute(object sender)
+        public void ScratchPad()
+        {
+            var folderBrowser = Model.Window.TabFolderBrowser.Content as FolderBrowerSidebar;
+            string docFile;
+            if (!string.IsNullOrEmpty(folderBrowser.SelectedFile))
+                docFile = folderBrowser.SelectedFile;
+
+            PathItem item = folderBrowser.GetSelectedPathItem();
+
+        }
+
+        #region Addin Implementation Methods
+        public override void OnExecute(object sender)
         {
             if(commanderWindow == null || !commanderWindow.IsLoaded)
             {
@@ -71,8 +85,6 @@ namespace CommanderAddin
             }
             commanderWindow.Show();
             commanderWindow.Activate();
-
-            
         }
 
 	    private void InitializeAddinModel()
@@ -198,10 +210,10 @@ namespace CommanderAddin
 				    }
 			    }
 		    }
-		    else
-		    {
-			    AddinModel.Window.ShowStatus("Command execution for " + command.Name + " completed successfully",6000);
-		    }
+		    //else
+		    //{
+			   // AddinModel.Window.ShowStatus("Command execution for " + command.Name + " completed successfully",6000);
+		    //}
 
 
 		    if (showConsole)
