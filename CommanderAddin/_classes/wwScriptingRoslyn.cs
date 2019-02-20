@@ -1,6 +1,4 @@
-﻿//#define useRemoteLoader 
-
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 //using System.Collections.Specialized;
@@ -51,8 +49,8 @@ namespace Westwind.wwScripting
         /// <summary>
         /// The object reference to the compiled object available after the first method call.
         /// You can use this method to call additional methods on the object.
-        /// For example, you can use CallMethod and pass multiple methods of code each of
-        /// which can be executed indirectly by using CallMethod() on this object reference.
+        /// For example, you can use ExecuteMethod and pass multiple methods of code each of
+        /// which can be executed indirectly by using ExecuteMethod() on this object reference.
         /// </summary>
         public object ScriptObjectRef = null;
 
@@ -93,6 +91,7 @@ namespace Westwind.wwScripting
 
         public string ErrorMessage = "";
         public bool Error = false;
+        public Exception LastException { get; set; }
 
         /// <summary>
         /// Path for the support assemblies wwScripting and RemoteLoader.
@@ -228,41 +227,22 @@ namespace Westwind.wwScripting
                 sb.Append(Namespaces);
                 sb.Append("\r\n");
 
-                if (ScriptingLanguage == "CSharp")
-                {
-                    // *** Namespace headers and class definition
-                    sb.Append("namespace " + AssemblyNamespace + "{\r\npublic class " + ClassName +
-                              ":MarshalByRefObject {\r\n");
+                // *** Namespace headers and class definition
+                sb.Append("namespace " + AssemblyNamespace + "{\r\npublic class " + ClassName +
+                          " {\r\n");
 
-                    // *** Generic Invoke method required for the remote call interface
-                    sb.Append(
-                        "public object Invoke(string lcMethod,object[] parms)\r\n{ " +
-                        "return this.GetType().InvokeMember(lcMethod,BindingFlags.InvokeMethod,null,this,parms );\r\n" +
-                        "}\r\n\r\n");
+                // *** Generic Invoke method required for the remote call interface
+                sb.Append(
+                    "public object Invoke(string lcMethod,object[] parms)\r\n{ " +
+                    "return this.GetType().InvokeMember(lcMethod,BindingFlags.InvokeMethod,null,this,parms );\r\n" +
+                    "}\r\n\r\n");
 
-                    //*** The actual code to run in the form of a full method definition.
-                    sb.Append(code);
+                //*** The actual code to run in the form of a full method definition.
+                sb.Append(code);
 
-                    sb.Append("\r\n} }"); // Class and namespace closed
-                }
-                else if (ScriptingLanguage == "VB")
-                {
-                    // *** Namespace headers and class definition
-                    sb.Append("Namespace " + AssemblyNamespace + "\r\npublic class " + ClassName + "\r\n");
-                    sb.Append("Inherits MarshalByRefObject\r\nImplements IRemoteInterface\r\n\r\n");
+                sb.Append("\r\n} }"); // Class and namespace closed
 
-                    // *** Generic Invoke method required for the remote call interface
-                    sb.Append(
-                        "Public Overridable Overloads Function Invoke(ByVal lcMethod As String, ByVal Parameters() As Object) As Object _\r\n" +
-                        "Implements IRemoteInterface.Invoke\r\n" +
-                        "return me.GetType().InvokeMember(lcMethod,BindingFlags.InvokeMethod,nothing,me,Parameters)\r\n" +
-                        "End Function\r\n\r\n");
 
-                    //*** The actual code to run in the form of a full method definition.
-                    sb.Append(code);
-
-                    sb.Append("\r\n\r\nEnd Class\r\nEnd Namespace\r\n"); // Class and namespace closed
-                }
 
                 if (SaveSourceCode)
                 {
@@ -278,7 +258,7 @@ namespace Westwind.wwScripting
                     return null;
             }
 
-            return CallMethod(ScriptObjectRef, methodName, parameters);
+            return ExecuteMethod(ScriptObjectRef, methodName, parameters);
         }
 
         /// <summary>
@@ -291,18 +271,10 @@ namespace Westwind.wwScripting
         /// <returns></returns>
         public object ExecuteCode(string code, params object[] parameters)
         {
-            if (ScriptingLanguage == "CSharp")
-                return ExecuteMethod("public object ExecuteCode(params object[] Parameters) \r\n{\r\n" +
-                                     code +
-                                     "\r\n}",
-                    "ExecuteCode", parameters);
-            else if (ScriptingLanguage == "VB")
-                return ExecuteMethod("public function ExecuteCode(ParamArray Parameters() As Object) as object\r\n" +
-                                     code +
-                                     "\r\nend function\r\n",
-                    "ExecuteCode", parameters);
-
-            return null;
+            return ExecuteMethod("public object ExecuteCode(params object[] Parameters) \r\n{\r\n" +
+                                 code +
+                                 "\r\n}",
+                "ExecuteCode", parameters);
         }
 
 
@@ -321,7 +293,7 @@ namespace Westwind.wwScripting
             if (loTemp == null)
                 return null;
 
-            return CallMethod(ScriptObjectRef, "ExecuteMethod", parameters);
+            return ExecuteMethod(ScriptObjectRef, "ExecuteMethod", parameters);
         }
 
         /// <summary>
@@ -368,6 +340,11 @@ namespace Westwind.wwScripting
 
         public object CreateInstance()
         {
+
+            LastException = null;
+            Error = false;
+            ErrorMessage = null;
+
             if (ScriptObjectRef != null)
             {
                 return ScriptObjectRef;
@@ -385,7 +362,7 @@ namespace Westwind.wwScripting
                     catch (Exception ex)
                     {
                         Error = true;
-                        ErrorMessage = ex.Message;
+                        ErrorMessage = ex.GetBaseException().Message;
                         return null;
                     }
                 else
@@ -407,14 +384,22 @@ namespace Westwind.wwScripting
             catch (Exception ex)
             {
                 Error = true;
-                ErrorMessage = ex.Message;
+                ErrorMessage = ex.GetBaseException().Message;
+                LastException = ex;
                 return null;
             }
 
         }
 
-        public object CallMethod(object loObject, string lcMethod, params object[] loParameters)
+        
+
+
+        public object ExecuteMethod(object loObject, string lcMethod, params object[] loParameters)
         {
+            LastException = null;
+            Error = false;
+            ErrorMessage = null;
+
             // *** Try to run it
             try
             {
@@ -449,7 +434,7 @@ namespace Westwind.wwScripting
             catch (Exception ex)
             {
                 Error = true;
-                ErrorMessage = ex.Message;
+                ErrorMessage = ex.GetBaseException().Message;
             }
 
             return null;

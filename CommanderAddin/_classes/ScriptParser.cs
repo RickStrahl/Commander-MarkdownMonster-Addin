@@ -1,6 +1,7 @@
 ﻿//if false
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -24,14 +25,15 @@ namespace CommanderAddin
     /// </example>
     public class ScriptParser
     {        
-        // Additional namespaces to add to the script
-        public List<string> Namespaces = new List<string>();
+        /// <summary>
+        /// Additional Namespaces to be added for the script to run
+        /// </summary>
+        //public NamespaceList Namespaces = new NamespaceList();
 
         /// <summary>
-        ///  Additional references to add beyond MsCoreLib and System 
-        /// Pass in a type from a give assembly
+        ///  Additional Assemblye References to be added         
         /// </summary>        
-        public List<string> References = new List<string>();
+        public HashSet<string> References = new HashSet<string>();
 
         
         public string ErrorMessage { get; set; }
@@ -150,6 +152,7 @@ namespace CommanderAddin
             scripting.AddAssembly("WPF\\PresentationFramework.dll");
             scripting.AddAssembly("WPF\\WindowsBase.dll");
             scripting.AddAssembly("System.Xaml.dll");
+            scripting.AddAssembly("Newtonsoft.Json");
 
             scripting.AddNamespace("System");
             scripting.AddNamespace("System.IO");
@@ -161,7 +164,10 @@ namespace CommanderAddin
             scripting.AddNamespace("System.Data.SqlClient");
             scripting.AddNamespace("System.Linq");
             scripting.AddNamespace("System.Windows");
-            scripting.AddNamespace("System.Collections.Generic");            
+            scripting.AddNamespace("System.Collections.Generic");
+
+            scripting.AddNamespace("Newtonsoft.Json");
+            scripting.AddNamespace("Newtonsoft.Json.Linq");
 
             scripting.AddNamespace("MarkdownMonster");
             scripting.AddNamespace("MarkdownMonster.Windows");
@@ -173,5 +179,8 @@ namespace CommanderAddin
             return scripting;
         }        
     }
+
+
+    
 }
 //#endif

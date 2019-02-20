@@ -59,17 +59,6 @@ namespace CommanderAddin
             MenuItems.Add(menuItem);
         }
 
-        public void ScratchPad()
-        {
-            var folderBrowser = Model.Window.TabFolderBrowser.Content as FolderBrowerSidebar;
-            string docFile;
-            if (!string.IsNullOrEmpty(folderBrowser.SelectedFile))
-                docFile = folderBrowser.SelectedFile;
-
-            PathItem item = folderBrowser.GetSelectedPathItem();
-
-        }
-
         #region Addin Implementation Methods
         public override void OnExecute(object sender)
         {
@@ -84,7 +73,7 @@ namespace CommanderAddin
                                       Model.Configuration.WindowPosition.SplitterPosition;                
             }
             commanderWindow.Show();
-            commanderWindow.Activate();
+            commanderWindow.Activate(); 
         }
 
 	    private void InitializeAddinModel()

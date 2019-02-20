@@ -45,7 +45,7 @@ namespace CommanderAddin
         /// <summary>
         /// Access to Markdown Monster's Main Configuration
         /// </summary>
-        public ApplicationConfiguration Configuration { get; set; }
+        public ApplicationConfiguration Configuration => AppModel.Configuration;
 
         
         /// <summary>
@@ -98,6 +98,8 @@ namespace CommanderAddin
         /// List of all the open document objects in the editor
         /// </summary>
         public List<MarkdownDocument> OpenDocuments => AppModel?.OpenDocuments;
+
+        
 
 		/// <summary>
 		/// Executes a process with given command line parameters

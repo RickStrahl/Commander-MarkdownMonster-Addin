@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		readme.md = readme.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommanderAddin.Test", "CommanderAddin.Test\CommanderAddin.Test.csproj", "{B1AFB477-A1D5-44D5-9882-210F85AEE0A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +23,15 @@ Global
 		{4FBD2864-0C5B-4D66-9301-4E759AB6CDF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FBD2864-0C5B-4D66-9301-4E759AB6CDF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FBD2864-0C5B-4D66-9301-4E759AB6CDF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1AFB477-A1D5-44D5-9882-210F85AEE0A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1AFB477-A1D5-44D5-9882-210F85AEE0A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1AFB477-A1D5-44D5-9882-210F85AEE0A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1AFB477-A1D5-44D5-9882-210F85AEE0A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D02EA7B-03CA-477A-85B4-5F1BB91A15A9}
 	EndGlobalSection
 EndGlobal

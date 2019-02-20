@@ -51,8 +51,8 @@ namespace Westwind.wwScripting
 		/// <summary>
 		/// The object reference to the compiled object available after the first method call.
 		/// You can use this method to call additional methods on the object.
-		/// For example, you can use CallMethod and pass multiple methods of code each of
-		/// which can be executed indirectly by using CallMethod() on this object reference.
+		/// For example, you can use ExecuteMethod and pass multiple methods of code each of
+		/// which can be executed indirectly by using ExecuteMethod() on this object reference.
 		/// </summary>
 		public object ScriptObjectRef = null;
 
