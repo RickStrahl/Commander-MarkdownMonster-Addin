@@ -122,9 +122,21 @@
                 </Grid.ColumnDefinitions>
 
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock  Margin="0,10,0,4">Keyboard Shortcut</TextBlock>
+                <StackPanel Grid.Column="0"  Margin="0,10,0,0">
+                    <TextBlock  >Keyboard Shortcut</TextBlock>
                     <TextBox Text="{Binding ActiveCommand.KeyboardShortcut}"  ToolTip="Keyboard shortcut sequence like Alt+Shift+M, Ctrl+Alt+Enter etc. Requires a restart of Markdown Monster to kick in."  />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="12,10,0,0">
+                    <TextBlock>Script Compilation Mode</TextBlock>
+                    <ComboBox 
+                        SelectedValue="{Binding ActiveCommand.CompilerMode}"  
+                        ToolTip="Determines whether the Roslyn or Classic C# compiler is used for snippets. Classic loads quicker, but Roslyn supports the latest C# language features." 
+                        ItemsSource="{Binding CompilerModes}"
+                        SelectedValuePath="Value"
+                        DisplayMemberPath="Key"
+                        
+                        />
                 </StackPanel>
 
             </Grid>

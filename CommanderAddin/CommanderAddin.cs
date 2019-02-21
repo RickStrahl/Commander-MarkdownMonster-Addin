@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +11,7 @@ using FontAwesome.WPF;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using MarkdownMonster.Windows;
-using Westwind.Utilities;
+
 
 namespace CommanderAddin
 {
@@ -133,13 +131,14 @@ namespace CommanderAddin
 		#endregion
 
 		
-		public void RunCommand(CommanderCommand command)
-	    {
+		public async Task RunCommand(CommanderCommand command)
+        {
             
 		    if (AddinModel.AppModel == null)
 			    InitializeAddinModel();
 
 		    string code = command.CommandText;
+            ConsoleTextWriter consoleWriter = null;
 
 		    bool showConsole = commanderWindow != null && commanderWindow.Visibility == Visibility.Visible;
 		    if (showConsole)
@@ -149,28 +148,45 @@ namespace CommanderAddin
 
 			    WindowUtilities.DoEvents();
 
-			    Console.SetOut(new ConsoleTextWriter()
-			    {
-				    tbox = tbox
-			    });
-
+                consoleWriter = new ConsoleTextWriter()
+                {
+                    tbox = tbox
+                };
+                Console.SetOut(consoleWriter);             
 		    }
 
-		    var parser = new ScriptParser();
-		    if (!parser.EvaluateScript(code, AddinModel))
-		    {
-			    if (!showConsole)
-			    {
-				    AddinModel.Window.ShowStatus("*** Addin execution failed: " + parser.ErrorMessage, 6000);
-				    AddinModel.Window.SetStatusIcon(FontAwesomeIcon.Warning, Colors.Red);
-			    }
-			    else
-				    Console.WriteLine($"*** Error running Script code:\r\n{parser.ErrorMessage}");
+            var parser = new ScriptParser()
+            {
+                CompilerMode = command.CompilerMode
+            };
 
-			    if (CommanderAddinConfiguration.Current.OpenSourceInEditorOnErrors)
+            bool result =parser.EvaluateScript(code, AddinModel);
+
+            //bool result = await Task.Run<bool>(() =>
+            //{               
+            //    return 
+            //});
+
+            if (!result)
+                {
+                    if (!showConsole)
+                    {
+                        AddinModel.Window.ShowStatus("*** Addin execution failed: " + parser.ErrorMessage, 6000);
+                        AddinModel.Window.SetStatusIcon(FontAwesomeIcon.Warning, Colors.Red);
+                    }
+                    else
+                        Console.WriteLine($@"*** Error running Script code:
+{parser.ErrorMessage}
+
+{parser.ScriptInstance.GeneratedClassCodeWithLineNumbers}
+");
+
+                
+
+                if (CommanderAddinConfiguration.Current.OpenSourceInEditorOnErrors)
 			    {
 				    string fname = Path.Combine(Path.GetTempPath(), "Commander_Compiled_Code.cs");
-				    File.WriteAllText(fname, parser.ScriptInstance.SourceCode);
+				    File.WriteAllText(fname, parser.ScriptInstance.GeneratedClassCode);
 
 				    var tab = OpenTab(fname);
 				    File.Delete(fname);
@@ -179,7 +195,7 @@ namespace CommanderAddin
 				    {
 					    var editor = tab.Tag as MarkdownDocumentEditor;
 					    editor.SetEditorSyntax("csharp");
-					    editor.SetMarkdown(parser.ScriptInstance.SourceCode);
+					    editor.SetMarkdown(parser.ScriptInstance.GeneratedClassCode);
 
 					    Dispatcher.CurrentDispatcher.InvokeAsync(() =>
 					    {
@@ -206,7 +222,8 @@ namespace CommanderAddin
 
 
 		    if (showConsole)
-		    {
+            {
+                consoleWriter.Close();
 			    commanderWindow.TextConsole.ScrollToHome();
 			    StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
 			    standardOutput.AutoFlush = true;
@@ -220,19 +237,19 @@ namespace CommanderAddin
     public class ConsoleTextWriter : TextWriter
     {
         public TextBox tbox;
+        private StringBuilder sb = new StringBuilder();
 
         public override void Write(char value)
         {
-            tbox.Text += value;
-            if (value == '\n')
-                Dispatcher.CurrentDispatcher.Delay(1,(s)=>tbox.ScrollToEnd());
+            sb.Append(value);            
         }
 
-        public override void Write(string value)
+     
+
+        public override void Close()
         {
-            base.Write(value);
-            WindowUtilities.DoEvents();
-            tbox.ScrollToEnd();
+            tbox.Text = sb.ToString();
+            base.Close();
         }
 
         public override Encoding Encoding

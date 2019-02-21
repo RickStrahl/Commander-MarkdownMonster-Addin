@@ -138,7 +138,7 @@ Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" +
         }
 
 
-        private void ListCommands_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void ListCommands_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var command = ListCommands.SelectedItem as CommanderCommand;
             if (command == null)
@@ -169,7 +169,8 @@ Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" +
             if (command == null)
                 return;
 
-            Model.Addin.RunCommand(command);
+            Dispatcher.InvokeAsync(() => { Model.Addin.RunCommand(command); });
+            
         }
 
         

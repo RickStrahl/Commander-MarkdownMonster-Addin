@@ -70,6 +70,9 @@
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="Westwind.Scripting, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Westwind.Scripting.0.1.0\lib\net45\Westwind.Scripting.dll</HintPath>
+    </Reference>
     <Reference Include="Westwind.Utilities">
       <HintPath>..\..\..\..\Users\rstrahl\AppData\Local\Markdown Monster\Westwind.Utilities.dll</HintPath>
       <Private>False</Private>
@@ -86,7 +89,6 @@
     <Compile Include="_classes\CommanderAddinConfiguration.cs" />
     <Compile Include="_classes\CommanderAddinModel.cs" />
     <Compile Include="_classes\ScriptParser.cs" />
-    <Compile Include="_classes\wwScripting.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="hsizegrip.png" />
@@ -106,7 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Build.ps1" />
-    <Compile Include="_classes\wwScriptingRoslyn.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

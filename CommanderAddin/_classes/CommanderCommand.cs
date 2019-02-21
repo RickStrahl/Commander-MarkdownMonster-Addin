@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using MarkdownMonster.Annotations;
+using Westwind.Scripting;
 
 namespace CommanderAddin
 {
@@ -42,9 +43,6 @@ namespace CommanderAddin
         }
         private string _commandText;
         
-
-
-
         public string KeyboardShortcut
         {
             get { return _keyboardShortcut; }
@@ -56,8 +54,21 @@ namespace CommanderAddin
             }
         }
         private string _keyboardShortcut;
-
         
+
+        public ScriptCompilerModes CompilerMode
+        {
+            get => _scriptMode;
+            set
+            {
+                if (value == _scriptMode) return;
+                _scriptMode = value;
+                OnPropertyChanged();
+            }
+        }
+        private ScriptCompilerModes _scriptMode = ScriptCompilerModes.Roslyn;
+
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

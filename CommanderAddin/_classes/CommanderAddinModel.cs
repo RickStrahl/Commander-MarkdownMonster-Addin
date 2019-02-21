@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using MarkdownMonster;
 using MarkdownMonster.Annotations;
+using Westwind.Scripting;
 
 
 namespace CommanderAddin
@@ -99,9 +100,24 @@ namespace CommanderAddin
         /// </summary>
         public List<MarkdownDocument> OpenDocuments => AppModel?.OpenDocuments;
 
-        
+        /// <summary>
+        /// Display list for dropdown
+        /// </summary>
+        public Dictionary<string, ScriptCompilerModes> CompilerModes
+        {
+            get
+            {
+                if (_CompilerModes != null) return _CompilerModes;
 
-		/// <summary>
+                _CompilerModes = new Dictionary<string, ScriptCompilerModes>();
+                _CompilerModes.Add("Roslyn", ScriptCompilerModes.Roslyn);
+                _CompilerModes.Add("Classic", ScriptCompilerModes.Classic);                
+                return _CompilerModes;
+            }
+        }
+        private Dictionary<string, ScriptCompilerModes> _CompilerModes;
+
+        /// <summary>
 		/// Executes a process with given command line parameters
 		/// </summary>
 		/// <param name="executable">Executable to run. Full path or exe only if on system path.</param>

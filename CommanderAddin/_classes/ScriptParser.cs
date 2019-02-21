@@ -1,15 +1,13 @@
 ﻿//if false
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
+using Westwind.Scripting;
 using Westwind.Utilities;
-using Westwind.wwScripting;
 
 namespace CommanderAddin
 {
@@ -24,25 +22,17 @@ namespace CommanderAddin
     /// string result = await parser.EvaluateScriptAsync(script, new Globals { Name = "Rick" });
     /// </example>
     public class ScriptParser
-    {        
+    {
+
         /// <summary>
-        /// Additional Namespaces to be added for the script to run
+        ///  Compiler mode used to compile this script with
         /// </summary>
-        //public NamespaceList Namespaces = new NamespaceList();
+        public ScriptCompilerModes CompilerMode { get; set; } = ScriptCompilerModes.Roslyn;
 
-        /// <summary>
-        ///  Additional Assemblye References to be added         
-        /// </summary>        
-        public HashSet<string> References = new HashSet<string>();
-
-        
         public string ErrorMessage { get; set; }
 
-        public wwScriptingRoslyn ScriptInstance { get; set; }
-
-
-        public static Dictionary<int, Assembly> CodeBlocks = new Dictionary<int, Assembly>();
-
+        public CSharpScriptExecution ScriptInstance { get; set; }        
+        
         /// <summary>
         /// Evaluates the embedded script parsing out {{ C# Expression }} 
         /// blocks and evaluating the expressions and embedding the string
@@ -55,17 +45,16 @@ namespace CommanderAddin
         /// <returns></returns>
         public bool EvaluateScript(string code, object model = null)
         {
+            ScriptInstance = CreateScriptObject();
 
-            ScriptInstance = CreatewwScripting();
 
-
-            if (CodeBlocks.ContainsKey(code.GetHashCode()))
-            {
-                Debug.WriteLine("wwScripting Cached Code: \r\n" + code);
-                ScriptInstance.ExecuteCodeFromAssembly(code, CodeBlocks[code.GetHashCode()], model);
-            }
-            else
-            {
+            //if (CodeBlocks.ContainsKey(code.GetHashCode()))
+            //{
+            //    Debug.WriteLine("wwScripting Cached Code: \r\n" + code);
+            //    ScriptInstance.ExecuteCodeFromAssembly(code, CodeBlocks[code.GetHashCode()], model);
+            //}
+            //else
+            //{
 
                 var snippetLines = StringUtils.GetLines(code);
                 var sb = new StringBuilder();
@@ -105,23 +94,30 @@ namespace CommanderAddin
 
                 string oldPath = Environment.CurrentDirectory;
 
-
                 code = sb.ToString();
-                code = "dynamic Model = Parameters[0];\r\n" +
+                code = "dynamic Model = parameters[0];\r\n" +
                        code + "\r\n" + 
                        "return null;";
 
-                ScriptInstance.ExecuteCode(code, model);
-                
-                // cache the generated assembly for reuse on subsequent runs
-                if (ScriptInstance.Assembly != null)
-                    CodeBlocks[code.GetHashCode()] = ScriptInstance.Assembly;
+                ScriptInstance.ExecuteCode(code, model);                          
 
                 Directory.SetCurrentDirectory(oldPath);
-            }
+            //}
 
             if (ScriptInstance.Error)
+            {
                 ErrorMessage = ScriptInstance.ErrorMessage;
+                var callStack = ScriptInstance.LastException?.StackTrace;
+                if (!string.IsNullOrEmpty(callStack))
+                {
+                     callStack = StringUtils.GetLines(callStack).FirstOrDefault();
+
+                    if (!string.IsNullOrEmpty(callStack))
+                        ErrorMessage += "\r\n" + "Error at: " + callStack;
+                }
+            }
+
+            
 
             return !ScriptInstance.Error;
         }
@@ -131,50 +127,54 @@ namespace CommanderAddin
         /// with the appropriate assemblies and namespaces set
         /// </summary>
         /// <returns></returns>
-        private static wwScriptingRoslyn CreatewwScripting()
+        private CSharpScriptExecution  CreateScriptObject()
         {
-            var scripting = new wwScriptingRoslyn()
+            var scripting = new CSharpScriptExecution()
             {
-                DefaultAssemblies = false,
-                AssemblyNamespace = "MarkdownMonster.Commander.Scripting"
+                GeneratedNamespace = "MarkdownMonster.Commander.Scripting"
             };
-            scripting.AddAssembly("System.dll");
-            scripting.AddAssembly("System.Core.dll");
-            scripting.AddAssembly("Microsoft.CSharp.dll");
-            scripting.AddAssembly("System.Windows.Forms.dll");
-            scripting.AddAssembly("System.Data.dll");
-            scripting.AddAssembly("MarkdownMonster.exe");
-            scripting.AddAssembly("Westwind.Utilities.dll");
-            scripting.AddAssembly("System.Configuration.dll");
 
-            scripting.AddAssembly("WPF\\PresentationCore.dll");
-            scripting.AddAssembly("WPF\\PresentationUI.dll");
-            scripting.AddAssembly("WPF\\PresentationFramework.dll");
-            scripting.AddAssembly("WPF\\WindowsBase.dll");
-            scripting.AddAssembly("System.Xaml.dll");
-            scripting.AddAssembly("Newtonsoft.Json");
+            scripting.AddAssemblies("System.dll",
+                "System.Core.dll",
+                "System.Drawing.dll",
+                "Microsoft.CSharp.dll",
+                "System.Windows.Forms.dll",
+                "System.Data.dll",
+                "MarkdownMonster.exe",
 
-            scripting.AddNamespace("System");
-            scripting.AddNamespace("System.IO");
-            scripting.AddNamespace("System.Reflection");            
-            scripting.AddNamespace("System.Text");
-            scripting.AddNamespace("System.Drawing");
-            scripting.AddNamespace("System.Diagnostics");                        
-            scripting.AddNamespace("System.Data");
-            scripting.AddNamespace("System.Data.SqlClient");
-            scripting.AddNamespace("System.Linq");
-            scripting.AddNamespace("System.Windows");
-            scripting.AddNamespace("System.Collections.Generic");
+                "Westwind.Utilities.dll",
+                "System.Configuration.dll",
 
-            scripting.AddNamespace("Newtonsoft.Json");
-            scripting.AddNamespace("Newtonsoft.Json.Linq");
+                "WPF\\PresentationCore.dll",
+                "WPF\\PresentationUI.dll",
+                "WPF\\PresentationFramework.dll",
+                "WPF\\WindowsBase.dll",
+                "System.Xaml.dll",
+                "Newtonsoft.Json.dll");
 
-            scripting.AddNamespace("MarkdownMonster");
-            scripting.AddNamespace("MarkdownMonster.Windows");
-            scripting.AddNamespace("Westwind.Utilities");
+            scripting.AddNamespaces("System",
+            "System.IO",
+            "System.Reflection",
+            "System.Text",
+            "System.Drawing",
+            "System.Diagnostics",
+            "System.Data",
+            "System.Data.SqlClient",
+            "System.Linq",
+            "System.Windows",
+            "System.Collections.Generic",
+
+            "Newtonsoft.Json",
+            "Newtonsoft.Json.Linq",
+
+            "MarkdownMonster",
+            "MarkdownMonster.Windows",
+            "Westwind.Utilities");
             
 
-            scripting.SaveSourceCode = true;
+            scripting.SaveGeneratedCode = true;
+
+            scripting.CompilerMode = CompilerMode;
 
             return scripting;
         }        
