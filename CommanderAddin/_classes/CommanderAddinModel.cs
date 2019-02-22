@@ -100,6 +100,7 @@ namespace CommanderAddin
         /// </summary>
         public List<MarkdownDocument> OpenDocuments => AppModel?.OpenDocuments;
 
+
         /// <summary>
         /// Display list for dropdown
         /// </summary>

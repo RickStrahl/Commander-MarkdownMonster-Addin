@@ -241,7 +241,12 @@ namespace CommanderAddin
 
         public override void Write(char value)
         {
-            sb.Append(value);            
+            sb.Append(value);
+
+            if (value == '\n')
+            {
+                tbox.Dispatcher.Invoke(() => tbox.Text = sb.ToString());
+            }
         }
 
      
