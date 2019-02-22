@@ -4,36 +4,99 @@
 
 <img src="icon.png" Height="128"  />
 
-> #### Currently in Beta release 
+This addin allows you to script Markdown Monster via C# script code. It's an easy way to add quick automation features to Markdown Monster without creating a [full blown Markdown Monster .NET Addin](http://markdownmonster.west-wind.com/docs/_4ne0s0qoi.htm).
 
-This addin lets you extend Markdown Monster via custom C# scripts or by easily calling external executables that can be tied to a hotkey or can be executed via the Commander addin's user interface. Commander scripts can be thought of as mini addins that can be created without requiring the creation of a full blown addin using small snippets of C# Script code.
+![](CommanderAddin/screenshot.png)
+
+Some things you can do:
+
+* Access the current document
+* Modify the active or any other open document
+* Launch a new process 
+* Open documents or folders in an external Program
+* Load data from a database and embed it in a document
+* Open a Git Client in the right folder context
+* Open all related documents
+* Launch an image optimizer to optimize all images
+* Create pre-filled documents into the editor  
+(which you can also do with the [Snippets addin]())
+* etc.
+
+Using the Command Addin you can access the [Markdown Monster Application Model](http://markdownmonster.west-wind.com/docs/_5dv018sft.htm) (via `Model.AppModel`) to access many of the core Markdown Document and UI features that let you automate and act upon open or selected documents in the editor.
+
+You can tie a hot key to a script (may require a restart of the application) to make functionality more easily accessible as well.
 
 ### Features
 Commander has the following  useful features:
 
 * C# Scripting - full C# language access
-* Reference and Namespace imports
 * Access to Markdown Monster's Model
     * Access to Document
     * Access to Editor
-    * Access to Window and WPF UI
-* Console Output for Debugging
+    * Access to Main Window and the entire WPF UI
+* Console Output
+* Language Features
+    * Latest C# compiler features
+    * Compilation and Runtime Error reporting
+    * Source Code display
 
-### What can you do with it?
-Heck the sky's the limit, but here are some simple things I've done with it just in the last couple of weeks:
-
-* Open my Git Client in the right folder context
-* Open all related documents
-* Launch an image optimizer to optimize all images
-* Creating pre-filled documents into the editor  
-(which you can also do with the [Snippets addin]())
-* Shell out to any external application using `ExecuteProcess()`
 
 ### C# Script Execution
-Scripts are executed as C# code, using a dynamically generated method inside of an in-memory assembly. You can pretty much execute any .NET code as long as you can reference the required assemblies you need for your code to execute.
+Scripts are executed as C# code that is compiled dynamically as 'in memory' assemblies. The addin caches generated assemblies so that multiple executions don't keep generating new assemblies.
 
-### Assembly Reference and Namespace Dependencies
-In order to execute code, the generated assembly has to explicitly load referenced assemblies. The script parser used in this addin allows for custom syntax at the top of the script to specify assembly references and namespaces as follows:
+You can pretty much execute any .NET code as long as you can reference the required assemblies you need for your code to execute.
+
+#### Script Execution
+Scripts are turned into a C# class that is then compiled into an assembly and executed. Assemblies are created dynamically and cached once generated based on the code snippet's content (plus the compiler mode). If you execute the same script repeatedly, one assembly is generated and used repeatedly. Each new or modified snippet generates a new assembly.
+
+Scripts include default assemblies and namespaces, so most features that are used in Markdown Monster are already in scope and accessible without adding explicit `#r` assembly references or `using` statements.
+
+Scripts execute in the context of a class in the following format:
+
+```cs
+24.  public object ExecuteCode(params object[] parameters)
+25.  {dynamic Model = parameters[0];
+26.  var docFile = Model?.ActiveDocument?.Filedname;
+27.  if(docFile == null)
+28.      return false;
+29.  
+30.  var pf =  Environment.GetEnvironmentVariable("ProgramW6432");
+31.  var folder = Path.Combine(pf,"SmartGit\\bin");
+32.  var exe = Path.Combine(folder,"smartgit.exe");
+33.  
+34.  var pi = Process.Start(exe,"\"" + docFile + "\"");
+35.  if (pi != null)
+36.      Model.Window.ShowStatus("Smartgit started...",5000);
+37.  else
+38.      Model.Window.ShowStatus("Failed to load Smartgit...",5000);
+39.  
+40.  
+42.  return null;  // generated
+43.  }
+```
+
+The method is passed a `CommanderAddinModel` instance which exposes most of the common:
+
+* **[AppModel](http://markdownmonster.west-wind.com/docs/_5dv018sft.htm)**  
+Markdown Monster's Main Application Model that gives access to configuration, window, document, editor, addins and much more. A subset of the properties on this object are exposed in this AddinModel reference for easier access.
+* **[Window](http://markdownmonster.west-wind.com/docs/_5dv018t7x.htm)**  
+The main Markdown Monster UI Window which includes access to open tabs, the folder browser and more.
+* **[ActiveDocument](http://markdownmonster.west-wind.com/docs/_5dv018tmz.htm)**  
+The document in the active tab. Contains the content, filename, load and save operations etc.
+* **[ActiveEditor](http://markdownmonster.west-wind.com/docs/_5dv018twa.htm)**  
+provides access to the active editor instance, for manipulating the document's content in the editor.
+* **Window.FolderBrowser**  
+lets you access the open folder browser or open a new folder in the folder browser.
+
+
+
+> #### Early Exit via `return`
+> If you need to exit the script early using `return` make sure that return some value as the wrapper method signature requires. The code returns `return false` although the return value of the script is irrelevant and ignored. But some value has to be returned.
+>   
+> A return value is **not required** if you don't exit early as the wrapper method has a `return null` at the end.
+
+#### Assembly Reference and Namespace Dependencies
+In order to execute code, the generated assembly has to explicitly load referenced assemblies. The script parser used in this addin allows for custom syntax at the top of the script to specify assembly references and namespaces using the following sytnax:
 
 ```cs
 #r Westwind.Utilities.dll
@@ -43,10 +106,8 @@ using Westwind.Utilities
 System.Windows.MessageBox.Show("Got it!");
 ```
 
-### `#r <assemblyReference>`
-The `#r` directive is used to reference an assembly by filename. Note you don't have to specify a path as the addin only looks for assemblies in the Markdown Monster install path.
-
-This loads an assembly reference into the script - you can reference any GAC assembly or any assembly that is available through Markdown Monster's root or `Addins` folder. 
+##### `#r <assemblyPath>`
+The `#r` directive is used to reference an assembly by filename. Assemblies should be referenced as `.dll` file names and cannot contain a path. Assemblies referenced have to either be a GAC installed assembly or they must live in Markdown Monster's startup code to be found. 
 
 > #### No external Assemblies allowed
 > For security reasons, we don't allow execution of pathed assemblies. All assemblies should be referenced just by their .dll file name (ie. `mydll.dll`).
@@ -55,10 +116,23 @@ This loads an assembly reference into the script - you can reference any GAC ass
 >
 > If you need external assemblies in your Scripts or Snippets we recommend you create a folder below the Addins folder like `SupportAssemblies` and put your referenced assemblies there.. 
 
-### `using <namespace>`  
+##### `using <namespace>`  
 This allows adding namespace references to your scripts the same way you'd use a using statement in a typical .NET class. Make sure any Assemblies you need are loaded. The Command Addin pre-references many common references and namespaces.
 
-Both of these commands have to be specified at the top of the script text.
+Both of these commands have to be specified at the top of the script text as they are parsed out and added back when code is generated and compiled.
+
+#### Error Handling
+The Command Addin has support for capturing and displaying Compiler and Runtime errors in the Console Output of the interface.
+
+![](CommanderAddin/ErrorInConsole.png)
+
+Each script is generated into a self-contained CSharp class that is compiled into its own assembly and then loaded and executed from the generated in-memory assembly. 
+
+If there are source code errors that cause a compiler error, the Addin displays the compiler error messages along with the line number where errors occurred.
+
+Runtime errors capture the last Call Stack information and provide the last executing line of code that caused the error. This may not always represent the real source of the error since you are executing generated code, but often it does provide some insight into code generated.
+
+Both Compiler and Runtime errors also display the source code along with line numbers so you can co-relate compiler errors to specific lines in the source code:
 
 ### Simple Examples
 The following script in the figure retrieves the active document's filename, then shows a directory listing of Markdown Files in the same folder in the Console, and then asks if you want to open the listed files in the editor:
@@ -71,23 +145,55 @@ Here are a few more useful examples that you can cut and paste right into the Co
 Example demonstrates how to launch an external process and open a folder in a GIT client using the .NET `Process` class.
 
 ```cs
-// Open current Git Repo in SmartGit
-// with Repo and file pre-selected
-using System.IO;
-using System.Diagnostics;
+var docFile = Model?.ActiveDocument?.Filename;
+if(docFile == null)
+    return false;
 
-var docFile = Model.ActiveDocument.Filename;
-
-var pf86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-var folder = Path.Combine(pf86,"SmartGit\\bin");
+var pf =  Environment.GetEnvironmentVariable("ProgramW6432");
+var folder = Path.Combine(pf,"SmartGit\\bin");
 var exe = Path.Combine(folder,"smartgit.exe");
 
-var pi = Process.Start(exe,docFile);
+var pi = Process.Start(exe,"\"" + docFile + "\"");
 if (pi != null)
     Model.Window.ShowStatus("Smartgit started...",5000);
 else
     Model.Window.ShowStatus("Failed to load Smartgit...",5000);
 ```
+
+#### Open All Documents in a Folder in MM
+The following retrieves the active document's filename and based on that gets a directory listing for all other `.md` files and optionally opens them all in the editor:
+
+```cs
+#r Westwind.Utilities.dll
+
+using Westwind.Utilities;
+using System.Windows;
+using System.IO;
+
+var doc = Model.ActiveDocument.Filename;
+var docPath = Path.GetDirectoryName(doc);
+
+Console.WriteLine("Markdown Files in: " + docPath);
+
+foreach(var file in Directory.GetFiles(docPath,"*.md"))
+{
+    Console.WriteLine(" - " + file + " - " + 
+                     StringUtils.FromCamelCase(Path.GetFileName(file)));    
+}
+
+if(MessageBox.Show("Do you want to open these Markdown Files?",
+                 "Open All Markdown Files",
+                 MessageBoxButton.YesNo,
+                 MessageBoxImage.Information) == MessageBoxResult.Yes)
+{
+    foreach(var file in Directory.GetFiles(docPath,"*.md"))
+        Model.Window.OpenTab(file);
+}        
+```
+
+Note that the `Westwind.Utilities` assembly and namespace definitions are actually optional since they are automatically included in the default list of added assemblies and namespaces - they serve mainly for demonstration purposes.
+
+For security reasons you can load assemblies only from the GAC or from assemblies that are located in the startup folder of Markdown Monster.
 
 #### Commit Active File to Git Origin
 Demonstrates committing the current document to Git locally and then pushing changes to a Git host using the `ExecuteHelper()` function:
@@ -119,5 +225,45 @@ result = Model.ExecuteProcess(gitExe,"push --porcelain --progress --recurse-subm
 Console.WriteLine(result == 0 ? "Success" : "Nothing to push. Exit Code: " + result);
 ```
 
+#### Open Folder Browser File in VS Code
+Here's a command that opens the active FolderBrowser item in Visual Studio Code. It uses the FolderBrowser's `GetSelectedPathItem()` method to retrieve the Path item from and extracts the filename then tries to find VS Code to open the file
 
+```cs
+var folderBrowser = Model.Window?.FolderBrowser as FolderBrowerSidebar;
+
+string docFile = null;
+
+var item = folderBrowser.GetSelectedPathItem();
+docFile = item?.FullPath;
+
+if (string.IsNullOrEmpty(docFile) || docFile == ".." ||
+   (!File.Exists(docFile) && !Directory.Exists(docFile) ))
+{
+    docFile = Model?.ActiveDocument?.Filename;
+    if (docFile == null)
+        return false;
+}
+
+var exe = @"%localappdata%\Programs\Microsoft VS Code\Code.exe";
+exe = Environment.ExpandEnvironmentVariables(exe);
+
+var pi = Process.Start(exe,"\"" + docFile + "\"");
+if (pi != null)
+    Model.Window.ShowStatus($"VS Code  started with: {docFile}",5000);
+else
+    Model.Window.ShowError("Failed to start VS Code.");
+
+```
+
+#### Print an Assembly List
+This is a trivial example, but useful to track what assemblies and addins were loaded by Markdown Monster.
+
+```cs
+var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+foreach(var assembly in assemblies)
+{
+	Console.WriteLine(assembly);
+}
+```
 
