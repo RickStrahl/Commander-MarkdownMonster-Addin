@@ -44,14 +44,14 @@ Commander has the following  useful features:
 ### C# Script Execution
 Scripts are executed as C# code that is compiled dynamically as 'in memory' assemblies. The addin caches generated assemblies so that multiple executions don't keep generating new assemblies.
 
-You can pretty much execute any .NET code as long as you can reference the required assemblies you need for your code to execute.
+You can execute any .NET code as long as you can reference the required assemblies you need for your code.
 
 #### Script Execution
-Scripts are turned into a C# class that is then compiled into an assembly and executed. Assemblies are created dynamically and cached once generated based on the code snippet's content (plus the compiler mode). If you execute the same script repeatedly, one assembly is generated and used repeatedly. Each new or modified snippet generates a new assembly.
+Scripts are turned into a C# class that is then compiled into an assembly and executed. Assemblies are created dynamically and cached once generated based on the code snippet's content (plus the compiler mode). If you execute the same script repeatedly, one assembly is generated and used repeatedly. Each new or modified snippet generates a new assembly when it is executed for the first time - subsequent invocations are cached and thus faster.
 
-Scripts include default assemblies and namespaces, so most features that are used in Markdown Monster are already in scope and accessible without adding explicit `#r` assembly references or `using` statements.
+Scripts include default assemblies and namespaces that are used in Markdown Monster , so most features that are used in Markdown Monster are already in scope and accessible without adding explicit `#r` assembly references or `using` statements. Add references and namespaces only if you get compilation errors to that effect.
 
-Scripts execute in the context of a class in the following format:
+Scripts execute in the context of a class method in the following format:
 
 ```cs
 24.  public object ExecuteCode(params object[] parameters)
@@ -75,7 +75,7 @@ Scripts execute in the context of a class in the following format:
 43.  }
 ```
 
-The method is passed a `CommanderAddinModel` instance which exposes most of the common:
+The method is passed a `CommanderAddinModel` instance which is made available as a `Model` variable. This type exposes most of the common top level objects in Markdown Monster plus MM's main application model:
 
 * **[AppModel](http://markdownmonster.west-wind.com/docs/_5dv018sft.htm)**  
 Markdown Monster's Main Application Model that gives access to configuration, window, document, editor, addins and much more. A subset of the properties on this object are exposed in this AddinModel reference for easier access.
@@ -88,7 +88,7 @@ provides access to the active editor instance, for manipulating the document's c
 * **Window.FolderBrowser**  
 lets you access the open folder browser or open a new folder in the folder browser.
 
-
+Methods are executed as code snippets so you don't need to return a value. However, if you need to exit early from a snippet use `return null` or `return someValue`. 
 
 > #### Early Exit via `return`
 > If you need to exit the script early using `return` make sure that return some value as the wrapper method signature requires. The code returns `return false` although the return value of the script is irrelevant and ignored. But some value has to be returned.
@@ -96,23 +96,25 @@ lets you access the open folder browser or open a new folder in the folder brows
 > A return value is **not required** if you don't exit early as the wrapper method has a `return null` at the end.
 
 #### Assembly Reference and Namespace Dependencies
-In order to execute code, the generated assembly has to explicitly load referenced assemblies. The script parser used in this addin allows for custom syntax at the top of the script to specify assembly references and namespaces using the following sytnax:
+In order to execute code, the generated assembly has to explicitly load referenced assemblies. The addin runs in the context of Markdown Monster so all of Markdown Monster's references are already preloaded. The addin also pre-loads most of the common namespaces into the generated class. Ideally don't add references or namespaces unless you get a compilation error to that effect. You can look at the source code to see what namespaces are auto-generated.
+
+If you do need to load additional assemblies you can do so using special reference syntax:
 
 ```cs
-#r Westwind.Utilities.dll
-using Westwind.Utilities
+#r System.Windows.Forms.dll
+using System.Windows.Forms;
 
 // Your method code here
 System.Windows.MessageBox.Show("Got it!");
 ```
 
-##### `#r <assemblyPath>`
+##### `#r <assemblyDll>`
 The `#r` directive is used to reference an assembly by filename. Assemblies should be referenced as `.dll` file names and cannot contain a path. Assemblies referenced have to either be a GAC installed assembly or they must live in Markdown Monster's startup code to be found. 
 
 > #### No external Assemblies allowed
-> For security reasons, we don't allow execution of pathed assemblies. All assemblies should be referenced just by their .dll file name (ie. `mydll.dll`).
+> We don't allow referencing of pathed assemblies. All assemblies should be referenced just by their .dll file name (ie. `mydll.dll`).
 >
->You can only load assemblies located in the GAC, the Markdown Monster Root Folder or the `Addins` folder and below (any sub-folder). These folders are restricted on a normal install and require admin rights to add files, so random files cannot be copied there easily and maliciously executed.
+> You can only load assemblies located in the GAC, the Markdown Monster Root Folder or the `Addins` folder and below (any sub-folder). These folders are restricted on a normal install and require admin rights to add files, so random files cannot be copied there easily and maliciously executed.
 >
 > If you need external assemblies in your Scripts or Snippets we recommend you create a folder below the Addins folder like `SupportAssemblies` and put your referenced assemblies there.. 
 
