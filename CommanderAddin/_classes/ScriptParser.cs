@@ -1,6 +1,4 @@
-﻿//if false
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,8 +29,8 @@ namespace CommanderAddin
 
         public string ErrorMessage { get; set; }
 
-        public CSharpScriptExecution ScriptInstance { get; set; }        
-        
+        public CSharpScriptExecution ScriptInstance { get; set; }
+
         /// <summary>
         /// Evaluates the embedded script parsing out {{ C# Expression }} 
         /// blocks and evaluating the expressions and embedding the string
@@ -48,76 +46,66 @@ namespace CommanderAddin
             ScriptInstance = CreateScriptObject();
 
 
-            //if (CodeBlocks.ContainsKey(code.GetHashCode()))
-            //{
-            //    Debug.WriteLine("wwScripting Cached Code: \r\n" + code);
-            //    ScriptInstance.ExecuteCodeFromAssembly(code, CodeBlocks[code.GetHashCode()], model);
-            //}
-            //else
-            //{
-
-                var snippetLines = StringUtils.GetLines(code);
-                var sb = new StringBuilder();
-                foreach (var line in snippetLines)
+            var snippetLines = StringUtils.GetLines(code);
+            var sb = new StringBuilder();
+            foreach (var line in snippetLines)
+            {
+                if (line.Trim().Contains("#r "))
                 {
-                    if (line.Trim().Contains("#r "))
+                    string assemblyName = line.Replace("#r ", "").Trim();
+
+                    if (assemblyName.Contains("\\") || assemblyName.Contains("/"))
                     {
-                        string assemblyName = line.Replace("#r ", "").Trim();
-
-                        if (assemblyName.Contains("\\") || assemblyName.Contains("/"))
-                        {
-                            ErrorMessage = "Assemblies loaded from external folders are not allowed: " + assemblyName +
-                                           "\r\n\r\n" +
-                                           "Referenced assemblies can only be loaded out of the Markdown Monster startup folder.";
-                            return false;
-                        }
-
-                        var fullAssemblyName = FileUtils.GetPhysicalPath(assemblyName);
-                        if (File.Exists(fullAssemblyName))
-                            assemblyName = fullAssemblyName;
-
-                        // Add to Engine since host is already instantiated
-                        ScriptInstance.AddAssembly(assemblyName);
-                        continue;
-                    }
-                    if (line.Trim().Contains("using ") && !line.Contains("(") )
-                    {
-                        string ns = line.Replace("using ", "").Replace(";","").Trim();
-
-                        if (!ScriptInstance.Namespaces.Contains("using " + ns + ";"))                            
-                            ScriptInstance.AddNamespace(ns);
-                        continue;
+                        ErrorMessage = "Assemblies loaded from external folders are not allowed: " + assemblyName +
+                                       "\r\n\r\n" +
+                                       "Referenced assemblies can only be loaded out of the Markdown Monster startup folder.";
+                        return false;
                     }
 
-                    sb.AppendLine(line);
+                    var fullAssemblyName = FileUtils.GetPhysicalPath(assemblyName);
+                    if (File.Exists(fullAssemblyName))
+                        assemblyName = fullAssemblyName;
+
+                    // Add to Engine since host is already instantiated
+                    ScriptInstance.AddAssembly(assemblyName);
+                    continue;
                 }
 
-                string oldPath = Environment.CurrentDirectory;
+                if (line.Trim().Contains("using ") && !line.Contains("("))
+                {
+                    string ns = line.Replace("using ", "").Replace(";", "").Trim();
 
-                code = sb.ToString();
-                code = "dynamic Model = parameters[0];\r\n" +
-                       code + "\r\n" + 
-                       "return null;";
+                    if (!ScriptInstance.Namespaces.Contains("using " + ns + ";"))
+                        ScriptInstance.AddNamespace(ns);
+                    continue;
+                }
 
-                ScriptInstance.ExecuteCode(code, model);                          
+                sb.AppendLine(line);
+            }
 
-                Directory.SetCurrentDirectory(oldPath);
-            //}
+            string oldPath = Environment.CurrentDirectory;
 
+            code = sb.ToString();
+            code = "dynamic Model = parameters[0];\r\n" +
+                   code + "\r\n" +
+                   "return null;";
+
+            ScriptInstance.ExecuteCode(code, model);
+
+            Directory.SetCurrentDirectory(oldPath);
+            
             if (ScriptInstance.Error)
             {
                 ErrorMessage = ScriptInstance.ErrorMessage;
                 var callStack = ScriptInstance.LastException?.StackTrace;
                 if (!string.IsNullOrEmpty(callStack))
                 {
-                     callStack = StringUtils.GetLines(callStack).FirstOrDefault();
+                    callStack = StringUtils.GetLines(callStack).FirstOrDefault();
 
                     if (!string.IsNullOrEmpty(callStack))
                         ErrorMessage += "\r\n" + "Error at: " + callStack;
                 }
             }
-
-            
 
             return !ScriptInstance.Error;
         }
@@ -178,9 +166,5 @@ namespace CommanderAddin
 
             return scripting;
         }        
-    }
-
-
-    
+    }   
 }
-//#endif
