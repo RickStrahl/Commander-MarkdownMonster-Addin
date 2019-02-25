@@ -100,6 +100,12 @@ namespace CommanderAddin
         /// </summary>
         public List<MarkdownDocument> OpenDocuments => AppModel?.OpenDocuments;
 
+        // TODO: Add this post MM 1.15.4 (property added in that version)
+        /// <summary>
+        /// List of open editors in tabs
+        /// </summary>
+        //public List<MarkdownDocumentEditor> OpenEditors => AppModel?.OpenEditors;
+        
 
         /// <summary>
         /// Display list for dropdown

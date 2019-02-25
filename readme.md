@@ -108,7 +108,7 @@ using System.Windows.Forms;
 System.Windows.MessageBox.Show("Got it!");
 ```
 
-##### `#r <assemblyDll>`
+##### #r <assemblyDll>
 The `#r` directive is used to reference an assembly by filename. Assemblies should be referenced as `.dll` file names and cannot contain a path. Assemblies referenced have to either be a GAC installed assembly or they must live in Markdown Monster's startup code to be found. 
 
 > #### No external Assemblies allowed
@@ -118,10 +118,17 @@ The `#r` directive is used to reference an assembly by filename. Assemblies shou
 >
 > If you need external assemblies in your Scripts or Snippets we recommend you create a folder below the Addins folder like `SupportAssemblies` and put your referenced assemblies there.. 
 
-##### `using <namespace>`  
+##### using <namespace>
 This allows adding namespace references to your scripts the same way you'd use a using statement in a typical .NET class. Make sure any Assemblies you need are loaded. The Command Addin pre-references many common references and namespaces.
 
 Both of these commands have to be specified at the top of the script text as they are parsed out and added back when code is generated and compiled.
+
+> #### No Support for Using Aliases
+> This addin **does not support C# using aliases**.  The following does not work and will result in a compilation error:
+>
+> ```cs
+> using MyBuilder = System.Text.StringBuilder;
+> ```
 
 #### Error Handling
 The Command Addin has support for capturing and displaying Compiler and Runtime errors in the Console Output of the interface.

@@ -80,7 +80,7 @@ namespace CommanderAddin
                         ScriptInstance.AddAssembly(assemblyName);
                         continue;
                     }
-                    if (line.Trim().Contains("using "))
+                    if (line.Trim().Contains("using ") && !line.Contains("(") )
                     {
                         string ns = line.Replace("using ", "").Replace(";","").Trim();
 
