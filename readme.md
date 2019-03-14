@@ -4,7 +4,7 @@
 
 <img src="icon.png" Height="128"  />
 
-This addin allows you to script Markdown Monster via C# script code. It's an easy way to add quick automation features to Markdown Monster without creating a [full blown Markdown Monster .NET Addin](http://markdownmonster.west-wind.com/docs/_4ne0s0qoi.htm).
+This addin allows you to script [Markdown Monster](https://markdownmonster.west-wind.com) via C# script code. It's an easy way to add quick automation features to Markdown Monster without creating a [full blown Markdown Monster .NET Addin](http://markdownmonster.west-wind.com/docs/_4ne0s0qoi.htm).
 
 ![](CommanderAddin/screenshot.png)
 
