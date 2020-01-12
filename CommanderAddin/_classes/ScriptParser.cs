@@ -86,11 +86,18 @@ namespace CommanderAddin
             string oldPath = Environment.CurrentDirectory;
 
             code = sb.ToString();
-            code = "dynamic Model = parameters[0];\r\n" +
-                   code + "\r\n" +
-                   "return null;";
+            //code = "dynamic Model = parameters[0];\r\n" +
+            //       code + "\r\n" +
+            //       "return null;";
 
-            ScriptInstance.ExecuteCode(code, model);
+            code = "public void ExecuteScript(dynamic Model)\n" +
+                   "{\n" +
+                   code + "\n" +
+                   "}";
+            
+            ScriptInstance.ExecuteMethod(code, "ExecuteScript",model);
+            
+            //.ExecuteCode(code, model);
 
             Directory.SetCurrentDirectory(oldPath);
             
@@ -166,5 +173,6 @@ namespace CommanderAddin
 
             return scripting;
         }        
-    }   
+    }
+
 }

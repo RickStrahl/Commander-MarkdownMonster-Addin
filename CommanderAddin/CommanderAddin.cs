@@ -160,6 +160,7 @@ namespace CommanderAddin
                 CompilerMode = command.CompilerMode
             };
 
+
             bool result =parser.EvaluateScript(code, AddinModel);
 
             //bool result = await Task.Run<bool>(() =>
@@ -197,11 +198,12 @@ namespace CommanderAddin
 					    editor.SetEditorSyntax("csharp");
 					    editor.SetMarkdown(parser.ScriptInstance.GeneratedClassCode);
 
-					    Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                        Dispatcher.CurrentDispatcher.InvokeAsync(() =>
 					    {
 						    if (editor.AceEditor == null)
 							    Task.Delay(400);
-						    editor.AceEditor.setshowlinenumbers(true);
+						    editor.AceEditor.SetShowLineNumbers(true);
 
 						    if (commanderWindow == null)
 						    {
@@ -212,7 +214,8 @@ namespace CommanderAddin
 							    commanderWindow.Activate();
 
 					    }, DispatcherPriority.ApplicationIdle);
-				    }
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    }
 			    }
 		    }
 		    //else
