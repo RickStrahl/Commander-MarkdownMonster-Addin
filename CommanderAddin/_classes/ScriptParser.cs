@@ -124,54 +124,51 @@ namespace CommanderAddin
         /// <returns></returns>
         private CSharpScriptExecution  CreateScriptObject()
         {
-            var scripting = new CSharpScriptExecution()
+            using (var scripting = new CSharpScriptExecution {GeneratedNamespace = "MarkdownMonster.Commander.Scripting"})
             {
-                GeneratedNamespace = "MarkdownMonster.Commander.Scripting"
-            };
+                scripting.AddAssemblies("System.dll",
+                    "System.Core.dll",
+                    "System.Drawing.dll",
+                    "Microsoft.CSharp.dll",
+                    "System.Windows.Forms.dll",
+                    "System.Data.dll",
+                    "MarkdownMonster.exe",
 
-            scripting.AddAssemblies("System.dll",
-                "System.Core.dll",
-                "System.Drawing.dll",
-                "Microsoft.CSharp.dll",
-                "System.Windows.Forms.dll",
-                "System.Data.dll",
-                "MarkdownMonster.exe",
+                    "Westwind.Utilities.dll",
+                    "System.Configuration.dll",
 
-                "Westwind.Utilities.dll",
-                "System.Configuration.dll",
+                    "WPF\\PresentationCore.dll",
+                    "WPF\\PresentationUI.dll",
+                    "WPF\\PresentationFramework.dll",
+                    "WPF\\WindowsBase.dll",
+                    "System.Xaml.dll",
+                    "Newtonsoft.Json.dll");
 
-                "WPF\\PresentationCore.dll",
-                "WPF\\PresentationUI.dll",
-                "WPF\\PresentationFramework.dll",
-                "WPF\\WindowsBase.dll",
-                "System.Xaml.dll",
-                "Newtonsoft.Json.dll");
+                scripting.AddNamespaces("System",
+                    "System.IO",
+                    "System.Reflection",
+                    "System.Text",
+                    "System.Drawing",
+                    "System.Diagnostics",
+                    "System.Data",
+                    "System.Data.SqlClient",
+                    "System.Linq",
+                    "System.Windows",
+                    "System.Collections.Generic",
 
-            scripting.AddNamespaces("System",
-            "System.IO",
-            "System.Reflection",
-            "System.Text",
-            "System.Drawing",
-            "System.Diagnostics",
-            "System.Data",
-            "System.Data.SqlClient",
-            "System.Linq",
-            "System.Windows",
-            "System.Collections.Generic",
+                    "Newtonsoft.Json",
+                    "Newtonsoft.Json.Linq",
 
-            "Newtonsoft.Json",
-            "Newtonsoft.Json.Linq",
+                    "MarkdownMonster",
+                    "MarkdownMonster.Windows",
+                    "Westwind.Utilities");
 
-            "MarkdownMonster",
-            "MarkdownMonster.Windows",
-            "Westwind.Utilities");
-            
 
-            scripting.SaveGeneratedCode = true;
+                scripting.SaveGeneratedCode = true;
+                scripting.CompilerMode = CompilerMode;
 
-            scripting.CompilerMode = CompilerMode;
-
-            return scripting;
+                return scripting;
+            }
         }        
     }
 
