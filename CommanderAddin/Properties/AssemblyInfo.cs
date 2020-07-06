@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rick Strahl, West Wind Technologies")]
 [assembly: AssemblyProduct("Markdown Monster")]
-[assembly: AssemblyCopyright("© Rick Strahl, West Wind Technologies 2017-2018")]
+[assembly: AssemblyCopyright("© Rick Strahl, West Wind Technologies 2017-2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,4 +32,4 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.4.2")]
+[assembly: AssemblyVersion("0.5.8")]
