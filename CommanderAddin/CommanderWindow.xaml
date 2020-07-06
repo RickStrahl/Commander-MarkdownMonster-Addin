@@ -13,7 +13,7 @@
         IsMinButtonEnabled="False" IsMaxRestoreButtonEnabled="False"                       
         Width="1100" Height="900" MinHeight="600"  MinWidth="700"                     
         Icon="icon.png"
-        TitlebarHeight="35"
+        
         WindowTransitionsEnabled="False">
     <Grid>
             <Grid.ColumnDefinitions>
