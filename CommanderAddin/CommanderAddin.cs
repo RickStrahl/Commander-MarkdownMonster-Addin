@@ -22,7 +22,7 @@ namespace CommanderAddin
 
         public CommanderAddinModel AddinModel { get; set; }
 
-        public override void OnApplicationStart()
+        public override async Task OnApplicationStart()
         {
             AddinModel = new CommanderAddinModel {
                 AppModel = Model,
@@ -30,7 +30,7 @@ namespace CommanderAddin
                 Addin = this
             };
 
-            base.OnApplicationStart();
+            await base.OnApplicationStart();
 
             Id = "Commander";
 
@@ -58,8 +58,10 @@ namespace CommanderAddin
         }
 
         #region Addin Implementation Methods
-        public override void OnExecute(object sender)
+        public override async Task OnExecute(object sender)
         {
+            await base.OnExecute(sender);
+
             if(commanderWindow == null || !commanderWindow.IsLoaded)
             {
                 InitializeAddinModel();
@@ -80,9 +82,9 @@ namespace CommanderAddin
 		    AddinModel.AppModel = Model;
 	    }
 
-	    public override void OnExecuteConfiguration(object sender)
+	    public override async Task OnExecuteConfiguration(object sender)
         {
-            OpenTab(Path.Combine(mmApp.Configuration.CommonFolder, "CommanderAddin.json"));            
+            await OpenTab(Path.Combine(mmApp.Configuration.CommonFolder, "CommanderAddin.json"));            
         }
 
         public override bool OnCanExecute(object sender)
@@ -91,7 +93,7 @@ namespace CommanderAddin
         }
 
 
-	    public override void OnWindowLoaded()
+	    public override Task OnWindowLoaded()
 	    {
 		    foreach (var command in CommanderAddinConfiguration.Current.Commands)
 		    {
@@ -121,14 +123,16 @@ namespace CommanderAddin
 			        }
 			    }
 		    }
-	    }
 
-        public override void OnApplicationShutdown()
+            return Task.CompletedTask;
+        }
+
+        public override Task OnApplicationShutdown()
 	    {
 		    commanderWindow?.Close();
-	    }
-
-		#endregion
+            return Task.CompletedTask;
+        }
+        #endregion
 
 		
 		public async Task RunCommand(CommanderCommand command)
@@ -189,7 +193,7 @@ namespace CommanderAddin
 				    string fname = Path.Combine(Path.GetTempPath(), "Commander_Compiled_Code.cs");
 				    File.WriteAllText(fname, parser.ScriptInstance.GeneratedClassCode);
 
-				    var tab = OpenTab(fname);
+				    var tab = await OpenTab(fname);
 				    File.Delete(fname);
 
 				    if (tab != null)
@@ -199,11 +203,11 @@ namespace CommanderAddin
 					    editor.SetMarkdown(parser.ScriptInstance.GeneratedClassCode);
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                        Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+                        _ = Dispatcher.CurrentDispatcher.InvokeAsync(() =>
 					    {
-						    if (editor.AceEditor == null)
+						    if (editor.JsEditor == null)
 							    Task.Delay(400);
-						    editor.AceEditor.SetShowLineNumbers(true);
+						    _ = editor.JsEditor.SetShowLineNumbers(true);
 
 						    if (commanderWindow == null)
 						    {

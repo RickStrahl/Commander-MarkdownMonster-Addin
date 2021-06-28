@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:CommanderAddin"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"                            
         Title="Commander C# Script Execution " TitleCharacterCasing="Normal"                
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
@@ -22,7 +23,7 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions >
                 <RowDefinition Height="30" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="*"  />
                 <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             
@@ -101,7 +102,7 @@
                              KeyUp="ListCommands_KeyUp">
         </ListBox>
 
-        <Grid Grid.Row="1" Grid.Column="1"  Margin="10,0">
+        <Grid Grid.Row="1" Grid.Column="1"  Margin="10,0" Name="ContentGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -109,7 +110,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition  Height="*"/>
                 <RowDefinition Height="24" />
-                <RowDefinition Height="110" />
+                <RowDefinition Height="110"  Name="ConsoleGridRow" x:FieldModifier="public" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Margin="0,0,0,4">Command Name</TextBlock>
             <TextBox  Grid.Row="1" Text="{Binding ActiveCommand.Name, UpdateSourceTrigger=PropertyChanged }" />
@@ -150,18 +151,32 @@
             </Grid>
 
             <TextBlock Grid.Row="3" Margin="0,10,0,4">Command C# Code</TextBlock>
-            <WebBrowser Grid.Row="4"  Name="WebBrowserCommand"/>
+            <wpf:WebView2 Grid.Row="4"  Name="WebBrowserCommand"/>
 
-            <GridSplitter Name="Splitter" Grid.Row="5" HorizontalAlignment="Stretch"  >
+            <GridSplitter Name="Splitter" Grid.Row="5" HorizontalAlignment="Stretch" ShowsPreview="False" >
                 <GridSplitter.Template>
                     <ControlTemplate TargetType="{x:Type GridSplitter}">
                         <Grid Background="Transparent">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
+                                    <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Opacity="0.80"  Padding="0,2,0,0">Console output</TextBlock>
-                                <Image Grid.Column="0" Source="hsizegrip.png" Width="30" HorizontalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Grid.Column="0" Opacity="0.50"  Padding="0,2,10,0">Console output</TextBlock>
+                                    <Button Grid.Column="2" Name="btnClearConsole"
+                                            Click="btnClearConsole_Click"
+                                            HorizontalAlignment="Left" Height="11" 
+                                            Padding="4 2" Focusable="False"
+                                            ToolTip="Clear the Console" BorderThickness="0" >
+                                        <fa:FontAwesome Icon="Remove"  Foreground="Firebrick"
+                                                        FontSize="10"                                                                                        
+                                                        FontWeight="Normal" 
+                                                        FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome">
+                                        </fa:FontAwesome>
+                                    </Button>
+                                </StackPanel>
+                                <Image Grid.Column="1" Source="hsizegrip.png" Width="30" HorizontalAlignment="center" />
                             </Grid>
 
                         </Grid>

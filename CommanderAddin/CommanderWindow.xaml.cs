@@ -112,20 +112,19 @@ Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" +
                     initialValue = selectedItem.CommandText;
             }
 
-            editor = new MarkdownEditorSimple(WebBrowserCommand, initialValue);            
-            editor.IsDirtyAction =  () =>
-            { 
-                string val = editor.GetMarkdown();
-                if (val != null && Model.ActiveCommand != null)
-                    Model.ActiveCommand.CommandText = val;
+            editor = new MarkdownEditorSimple(WebBrowserCommand, initialValue, "csharp");         
+            editor.IsDirtyAction = (isDirty, newText, oldText) =>
+            {
+                if (newText != null && Model.ActiveCommand != null)
+                    Model.ActiveCommand.CommandText = newText;
 
-                return true;
+                return newText != oldText;
             };
 
             Dispatcher.InvokeAsync(() =>
             {
                 ListCommands.Focus();
-                editor.SetEditorSyntax("csharp");                
+                _ = editor.BrowserInterop.SetLanguage("csharp");                
             },System.Windows.Threading.DispatcherPriority.ApplicationIdle);
 
             pageLoaded = true;
@@ -174,7 +173,7 @@ Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" +
         }
 
         
-        private void ListCommands_KeyUp(object sender, KeyEventArgs e)
+        private async void ListCommands_KeyUp(object sender, KeyEventArgs e)
         {
             
             if (e.Key == Key.Return || e.Key == Key.Space)
@@ -182,11 +181,11 @@ Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" +
                 
                 var command = ListCommands.SelectedItem as CommanderCommand;
                 if (command != null)                    
-                    Model.Addin.RunCommand(command);
+                    await Model.Addin.RunCommand(command);
             }
         }
 
-        private void ListCommands_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ListCommands_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!pageLoaded)
                 return;
@@ -196,11 +195,11 @@ Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" +
             {
                 try
                 {
-                    editor?.SetMarkdown(command.CommandText);
+                    await editor.BrowserInterop.SetValue(command.CommandText);
                 }
                 catch
-                {
-                }
+                { }
+
                 CommanderAddinConfiguration.Current.LastCommand = command.Name;
             }
 
@@ -257,5 +256,11 @@ Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" +
             StatusIcon.StopSpin();
         }
         #endregion
+
+        private void btnClearConsole_Click(object sender, RoutedEventArgs e)
+        {
+            TextConsole.Text = string.Empty;
+            ConsoleGridRow.Height = new GridLength(0);
+        }
     }
 }
