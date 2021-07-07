@@ -151,7 +151,7 @@
             </Grid>
 
             <TextBlock Grid.Row="3" Margin="0,10,0,4">Command C# Code</TextBlock>
-            <wpf:WebView2 Grid.Row="4"  Name="WebBrowserCommand"/>
+            <WebBrowser Grid.Row="4"  Name="WebBrowserCommand"/>
 
             <GridSplitter Name="Splitter" Grid.Row="5" HorizontalAlignment="Stretch" ShowsPreview="False" >
                 <GridSplitter.Template>
