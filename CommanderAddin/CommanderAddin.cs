@@ -165,7 +165,7 @@ namespace CommanderAddin
             };
 
 
-            bool result =parser.EvaluateScript(code, AddinModel);
+            bool result = await parser.EvaluateScriptAsync(code, AddinModel);
 
             //bool result = await Task.Run<bool>(() =>
             //{               

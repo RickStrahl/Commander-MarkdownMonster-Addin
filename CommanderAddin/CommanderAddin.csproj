@@ -22,12 +22,15 @@
 		<PackageReference Include="FontAwesome.WPF" Version="4.7.0.9">
 			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1185.39" >
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1185.39">
+			<IncludeAssets>compile</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Westwind.Scripting" version="0.4.0">
 			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
 
 		<PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" version="3.6.0" />
-		<PackageReference Include="Westwind.Scripting" version="0.3.0" />
+		
 	</ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472'">

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Westwind.Scripting;
 using Westwind.Utilities;
 
@@ -41,7 +42,7 @@ namespace CommanderAddin
         /// <param name="code">The code to execute
         /// <param name="model">Optional model data accessible in Expressions as `Model`</param>
         /// <returns></returns>
-        public bool EvaluateScript(string code, object model = null)
+        public async Task<bool> EvaluateScriptAsync(string code, object model = null)
         {
             ScriptInstance = CreateScriptObject();
 
@@ -90,15 +91,15 @@ namespace CommanderAddin
             //       code + "\r\n" +
             //       "return null;";
 
-            code = "public void ExecuteScript(dynamic Model)\n" +
+            code = "public async Task<string> ExecuteScript(dynamic Model)\n" +
                    "{\n" +
                    code + "\n" +
+                   "return null;\n" +
                    "}";
-            
-            ScriptInstance.ExecuteMethod(code, "ExecuteScript",model);
-            
-            //.ExecuteCode(code, model);
 
+            string res = await ScriptInstance.ExecuteMethodAsync<string>(code, "ExecuteScript", model);
+            
+            
             Directory.SetCurrentDirectory(oldPath);
             
             if (ScriptInstance.Error)
@@ -145,6 +146,7 @@ namespace CommanderAddin
                     "Newtonsoft.Json.dll");
 
                 scripting.AddNamespaces("System",
+                    "System.Threading.Tasks",
                     "System.IO",
                     "System.Reflection",
                     "System.Text",
