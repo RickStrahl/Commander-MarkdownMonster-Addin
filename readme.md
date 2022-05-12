@@ -22,7 +22,7 @@ Some things you can do:
 (which you can also do with the [Snippets addin]())
 * etc.
 
-Using the Command Addin you can access the [Markdown Monster Application Model](http://markdownmonster.west-wind.com/docs/_5dv018sft.htm) (via `Model.AppModel`) to access many of the core Markdown Document and UI features that let you automate and act upon open or selected documents in the editor.
+Using the Command Addin you can saccess the [Markdown Monster Application Model](http://markdownmonster.west-wind.com/docs/_5dv018sft.htm) (via `Model.AppModel`) to access many of the core Markdown Document and UI features that let you automate and act upon open or selected documents in the editor.
 
 You can tie a hot key to a script (may require a restart of the application) to make functionality more easily accessible as well.
 
