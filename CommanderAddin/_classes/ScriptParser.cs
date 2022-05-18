@@ -24,10 +24,8 @@ namespace CommanderAddin
     {
 
         /// <summary>
-        ///  Compiler mode used to compile this script with
+        /// If a compilation error occurs this holds the compiler error message
         /// </summary>
-        public ScriptCompilerModes CompilerMode { get; set; } = ScriptCompilerModes.Roslyn;
-
         public string ErrorMessage { get; set; }
 
         public CSharpScriptExecution ScriptInstance { get; set; }
@@ -45,8 +43,7 @@ namespace CommanderAddin
         public async Task<bool> EvaluateScriptAsync(string code, object model = null)
         {
             ScriptInstance = CreateScriptObject();
-
-
+            
             var snippetLines = StringUtils.GetLines(code);
             var sb = new StringBuilder();
             foreach (var line in snippetLines)
@@ -87,9 +84,6 @@ namespace CommanderAddin
             string oldPath = Environment.CurrentDirectory;
 
             code = sb.ToString();
-            //code = "dynamic Model = parameters[0];\r\n" +
-            //       code + "\r\n" +
-            //       "return null;";
 
             code = "public async Task<string> ExecuteScript(dynamic Model)\n" +
                    "{\n" +
@@ -123,55 +117,52 @@ namespace CommanderAddin
         /// with the appropriate assemblies and namespaces set
         /// </summary>
         /// <returns></returns>
-        private CSharpScriptExecution  CreateScriptObject()
+        private CSharpScriptExecution CreateScriptObject()
         {
-            using (var scripting = new CSharpScriptExecution {GeneratedNamespace = "MarkdownMonster.Commander.Scripting"})
-            {
-                scripting.AddAssemblies("System.dll",
-                    "System.Core.dll",
-                    "System.Drawing.dll",
-                    "Microsoft.CSharp.dll",
-                    "System.Windows.Forms.dll",
-                    "System.Data.dll",
-                    "MarkdownMonster.exe",
+            var scripting = new CSharpScriptExecution { GeneratedNamespace = "MarkdownMonster.Commander.Scripting" };
+            scripting.AddDefaultReferencesAndNamespaces();
 
-                    "Westwind.Utilities.dll",
-                    "System.Configuration.dll",
+            scripting.AddAssemblies(
+                "System.Drawing.dll",
+                "System.Windows.Forms.dll",
+                "System.Data.dll",
+                "MarkdownMonster.exe",
 
-                    "WPF\\PresentationCore.dll",
-                    "WPF\\PresentationUI.dll",
-                    "WPF\\PresentationFramework.dll",
-                    "WPF\\WindowsBase.dll",
-                    "System.Xaml.dll",
-                    "Newtonsoft.Json.dll");
+                "Westwind.Utilities.dll",
+                "System.Configuration.dll",
 
-                scripting.AddNamespaces("System",
-                    "System.Threading.Tasks",
-                    "System.IO",
-                    "System.Reflection",
-                    "System.Text",
-                    "System.Drawing",
-                    "System.Diagnostics",
-                    "System.Data",
-                    "System.Data.SqlClient",
-                    "System.Linq",
-                    "System.Windows",
-                    "System.Collections.Generic",
+                "WPF\\PresentationCore.dll",
+                "WPF\\PresentationUI.dll",
+                "WPF\\PresentationFramework.dll",
+                "WPF\\WindowsBase.dll",
+                "System.Xaml.dll",
+                "Newtonsoft.Json.dll");
 
-                    "Newtonsoft.Json",
-                    "Newtonsoft.Json.Linq",
+            scripting.AddNamespaces("System",
+                "System.Threading.Tasks",
+                "System.IO",
+                "System.Reflection",
+                "System.Text",
+                "System.Drawing",
+                "System.Diagnostics",
+                "System.Data",
+                "System.Data.SqlClient",
+                "System.Linq",
+                "System.Windows",
+                "System.Collections.Generic",
 
-                    "MarkdownMonster",
-                    "MarkdownMonster.Windows",
-                    "Westwind.Utilities");
+                "Newtonsoft.Json",
+                "Newtonsoft.Json.Linq",
+
+                "MarkdownMonster",
+                "MarkdownMonster.Windows",
+                "Westwind.Utilities");
 
 
-                scripting.SaveGeneratedCode = true;
-                scripting.CompilerMode = CompilerMode;
+            scripting.SaveGeneratedCode = true;
 
-                return scripting;
-            }
-        }        
+            return scripting;
+        }
     }
 
 }

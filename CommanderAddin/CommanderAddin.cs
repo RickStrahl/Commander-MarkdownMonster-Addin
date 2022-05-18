@@ -11,6 +11,7 @@ using FontAwesome.WPF;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using MarkdownMonster.Windows;
+using Westwind.Utilities;
 
 
 namespace CommanderAddin
@@ -106,7 +107,7 @@ namespace CommanderAddin
                     try
 			        {
                         var gesture = new KeyGestureConverter().ConvertFromString(ksc) as InputGesture;
-                        var cmd = new CommandBase((s, e) => RunCommand(command),
+                        var cmd = new CommandBase((s, e) => RunCommand(command).FireAndForget(),
                             (s, e) => Model.IsEditorActive);
                         
 			            kb.Gesture = gesture;
@@ -159,12 +160,7 @@ namespace CommanderAddin
                 Console.SetOut(consoleWriter);             
 		    }
 
-            var parser = new ScriptParser()
-            {
-                CompilerMode = command.CompilerMode
-            };
-
-
+            var parser = new ScriptParser();
             bool result = await parser.EvaluateScriptAsync(code, AddinModel);
 
             //bool result = await Task.Run<bool>(() =>
@@ -199,8 +195,8 @@ namespace CommanderAddin
 				    if (tab != null)
 				    {
 					    var editor = tab.Tag as MarkdownDocumentEditor;
-					    editor.SetEditorSyntax("csharp");
-					    editor.SetMarkdown(parser.ScriptInstance.GeneratedClassCode);
+					    await editor.SetEditorSyntax("csharp");
+					    await editor.SetMarkdown(parser.ScriptInstance.GeneratedClassCode);
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         _ = Dispatcher.CurrentDispatcher.InvokeAsync(() =>

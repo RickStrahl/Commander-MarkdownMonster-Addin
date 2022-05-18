@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using FontAwesome.WPF;
 using MarkdownMonster;
+using Westwind.Utilities;
 
 namespace CommanderAddin
 {
@@ -32,49 +33,22 @@ namespace CommanderAddin
             {
                 Model.AddinConfiguration.Commands = new ObservableCollection<CommanderCommand>();
                 Model.AddinConfiguration.Commands.Add(
-		            new CommanderCommand
-		            {
-			            Name = "Console Test",
-			            CommandText = @"
-for(int x = 1;  x < 10; x++) {
-    Console.WriteLine(""Hello World "" + x.ToString());
-}"
-					});
-	            Model.AddinConfiguration.Commands.Add(
-		            new CommanderCommand
-		            {
-			            Name = "Git Commit Active Document",
-						KeyboardShortcut = "Alt-Shift-G",
-			            CommandText = @"
-// ASSSUMES: Git is in your system path. Otherwise add path here
-var gitExe = ""git.exe"";
+                    new CommanderCommand
+                    {
+                        Name = "Console Test",
+                        CommandText = "for(int x = 1;  x < 5; x++) {\n    Console.WriteLine(\"Hello World \" + x.ToString());\n}\n\n// Demonstrate async functionality\nusing (var client = new WebClient())\n{\n    var uri = new Uri(\"https://albumviewer.west-wind.com/api/album/37\");\n    var json = await client.DownloadStringTaskAsync(uri);\n    Console.WriteLine($\"\\n{json}\");\n}",
+                    });
 
-var doc = Model.ActiveDocument.Filename;
-var docFile = Path.GetFileName(doc);
-var docPath = Path.GetDirectoryName(doc);
-
-Directory.SetCurrentDirectory(docPath);
-
-Console.WriteLine(""Staging "" + docFile);
-int result = Model.ExecuteProcess(gitExe, ""add --force -- \"""" + docFile + ""\"""");
-Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to stage. Exit Code: "" + result);
-
-Console.WriteLine(""Committing..."");
-result = Model.ExecuteProcess(gitExe, ""commit -m \""Updating documentation for "" + docFile + ""\"""");
-Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to commit. Exit Code: "" + result);
-
-if (result != 0)
-return null;
-
-Console.WriteLine(""Pushing..."");
-result = Model.ExecuteProcess(gitExe, ""push --porcelain --progress --recurse-submodules=check origin refs/heads/master:refs/heads/master"");
-Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" + result);
-"
-
-					});
-
-			}
-			else
+                Model.AddinConfiguration.Commands.Add(
+                    new CommanderCommand
+                    {
+                        Name = "Open in VsCode",
+                        CommandText =
+                            "var docFile = Model.ActiveDocument.Filename;\nif (string.IsNullOrEmpty(docFile))\n\treturn null;\n\nModel.Window.SaveFile();\n\nvar exe = @\"C:\\Program Files\\Microsoft VS Code\\Code.exe\";\nexe = Environment.ExpandEnvironmentVariables(exe);\n\nProcess pi = null;\ntry {\n\tvar lineNo = await Model.ActiveEditor.GetLineNumber();\n\tpi = Process.Start(exe,\"-g \\\"\" + docFile + $\":{lineNo + 1}\\\"\");\n}\ncatch(Exception ex) {\n\tModel.Window.ShowStatusError(\"Couldn't open editor: \" + ex.Message);\n\treturn null;\n}\n\nif (pi != null)\n    Model.Window.ShowStatus($\"VS Code  started with: {docFile}\",5000);\nelse\n    Model.Window.ShowStatusError(\"Failed to start VS Code.\");\n",
+                        KeyboardShortcut = "Alt-Shift-V"
+                    });
+            }
+            else
             {
                 Model.AddinConfiguration.Commands =
                     new ObservableCollection<CommanderCommand>(Model.AddinConfiguration.Commands.OrderBy(snip => snip.Name));
@@ -143,7 +117,7 @@ Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" +
             if (command == null)
                 return;
 
-            Model.Addin.RunCommand(command);            
+            await Model.Addin.RunCommand(command);            
         }
 
         private void ToolButtonNewCommand_Click(object sender, RoutedEventArgs e)
@@ -168,7 +142,7 @@ Console.WriteLine(result == 0 ? ""Success"" : ""Nothing to push. Exit Code: "" +
             if (command == null)
                 return;
 
-            Dispatcher.InvokeAsync(() => { Model.Addin.RunCommand(command); });
+            Dispatcher.InvokeAsync(() => { Model.Addin.RunCommand(command).FireAndForget(); });
             
         }
 

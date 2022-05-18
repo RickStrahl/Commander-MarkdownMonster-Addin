@@ -25,12 +25,9 @@
 		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1210.39">
 			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Westwind.Scripting" version="0.4.6">
+		<PackageReference Include="Westwind.Scripting" version="1.0.2">
 			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
-
-		<PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" version="3.6.0" />
-		
 	</ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472'">

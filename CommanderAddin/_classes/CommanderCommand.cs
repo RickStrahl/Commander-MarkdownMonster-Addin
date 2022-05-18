@@ -54,19 +54,6 @@ namespace CommanderAddin
             }
         }
         private string _keyboardShortcut;
-        
-
-        public ScriptCompilerModes CompilerMode
-        {
-            get => _scriptMode;
-            set
-            {
-                if (value == _scriptMode) return;
-                _scriptMode = value;
-                OnPropertyChanged();
-            }
-        }
-        private ScriptCompilerModes _scriptMode = ScriptCompilerModes.Roslyn;
 
 
         public event PropertyChangedEventHandler PropertyChanged;
