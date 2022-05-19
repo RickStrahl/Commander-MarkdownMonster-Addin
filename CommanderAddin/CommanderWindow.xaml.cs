@@ -136,14 +136,13 @@ namespace CommanderAddin
         }
 
 
-        private void ToolButtonRunCommand_Click(object sender, RoutedEventArgs e)
+        private async void ToolButtonRunCommand_Click(object sender, RoutedEventArgs e)
         {
             var command = ListCommands.SelectedItem as CommanderCommand;
             if (command == null)
                 return;
 
-            Dispatcher.InvokeAsync(() => { Model.Addin.RunCommand(command).FireAndForget(); });
-            
+             await Model.Addin.RunCommand(command);
         }
 
         

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MarkdownMonster;
 using Westwind.Scripting;
 using Westwind.Utilities;
 
@@ -28,6 +29,18 @@ namespace CommanderAddin
         /// </summary>
         public string ErrorMessage { get; set; }
 
+        /// <summary>
+        /// Returns source code for the compiled script
+        /// </summary>
+        public string CompiledCode
+        {
+            get
+            {
+                if (ScriptInstance == null) return null;
+                return ScriptInstance.GeneratedClassCodeWithLineNumbers;
+            }
+        }
+
         public CSharpScriptExecution ScriptInstance { get; set; }
 
         /// <summary>
@@ -40,7 +53,7 @@ namespace CommanderAddin
         /// <param name="code">The code to execute
         /// <param name="model">Optional model data accessible in Expressions as `Model`</param>
         /// <returns></returns>
-        public async Task<bool> EvaluateScriptAsync(string code, object model = null)
+        public async Task<bool> EvaluateScriptAsync(string code, CommanderAddinModel model = null)
         {
             ScriptInstance = CreateScriptObject();
             
@@ -85,28 +98,20 @@ namespace CommanderAddin
 
             code = sb.ToString();
 
-            code = "public async Task<string> ExecuteScript(dynamic Model)\n" +
+            code = "public async Task<string> ExecuteScript(CommanderAddinModel Model)\n" +
                    "{\n" +
                    code + "\n" +
-                   "return null;\n" +
+                   "return \"ok\";\n" +
                    "}";
 
-            string res = await ScriptInstance.ExecuteMethodAsync<string>(code, "ExecuteScript", model);
-            
-            
+            string res = await ScriptInstance.ExecuteMethodAsync<string>(code, "ExecuteScript", model);            
+
             Directory.SetCurrentDirectory(oldPath);
+
             
             if (ScriptInstance.Error)
             {
                 ErrorMessage = ScriptInstance.ErrorMessage;
-                var callStack = ScriptInstance.LastException?.StackTrace;
-                if (!string.IsNullOrEmpty(callStack))
-                {
-                    callStack = StringUtils.GetLines(callStack).FirstOrDefault();
-
-                    if (!string.IsNullOrEmpty(callStack))
-                        ErrorMessage += "\r\n" + "Error at: " + callStack;
-                }
             }
 
             return !ScriptInstance.Error;
@@ -119,8 +124,14 @@ namespace CommanderAddin
         /// <returns></returns>
         private CSharpScriptExecution CreateScriptObject()
         {
-            var scripting = new CSharpScriptExecution { GeneratedNamespace = "MarkdownMonster.Commander.Scripting" };
+            var scripting = new CSharpScriptExecution
+            {
+                GeneratedNamespace = "MarkdownMonster.Commander.Scripting",
+                ThrowExceptions = false
+            };
             scripting.AddDefaultReferencesAndNamespaces();
+
+            scripting.AddAssembly(typeof(CommanderAddin));
 
             scripting.AddAssemblies(
                 "System.Drawing.dll",
@@ -156,7 +167,8 @@ namespace CommanderAddin
 
                 "MarkdownMonster",
                 "MarkdownMonster.Windows",
-                "Westwind.Utilities");
+                "Westwind.Utilities",
+                "CommanderAddin");
 
 
             scripting.SaveGeneratedCode = true;

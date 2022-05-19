@@ -1,4 +1,4 @@
-﻿<img src="icon.png" Height="128"  align="right" />
+<img src="icon.png" Height="128"  align="right" />
 
 # Change Log Commander Addin for Markdown Monster 
 

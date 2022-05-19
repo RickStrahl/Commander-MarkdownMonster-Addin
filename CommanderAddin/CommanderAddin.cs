@@ -163,27 +163,19 @@ namespace CommanderAddin
             var parser = new ScriptParser();
             bool result = await parser.EvaluateScriptAsync(code, AddinModel);
 
-            //bool result = await Task.Run<bool>(() =>
-            //{               
-            //    return 
-            //});
-
             if (!result)
+            {
+                if (!showConsole)
                 {
-                    if (!showConsole)
-                    {
-                        AddinModel.Window.ShowStatus("*** Addin execution failed: " + parser.ErrorMessage, 6000);
-                        AddinModel.Window.SetStatusIcon(FontAwesomeIcon.Warning, Colors.Red);
-                    }
-                    else
-                        Console.WriteLine($@"*** Error running Script code:
-{parser.ErrorMessage}
-
-{parser.ScriptInstance.GeneratedClassCodeWithLineNumbers}
-");
-
+                    AddinModel.Window.ShowStatus("Addin execution failed: " + parser.ErrorMessage, 6000);
+                    AddinModel.Window.SetStatusIcon(FontAwesomeIcon.Warning, Colors.Red);
+                }
+                else
+                    Console.WriteLine($@"*** Script  Error: {parser.ErrorMessage}");
                 
-
+                if(parser.ScriptInstance.ErrorType == Westwind.Scripting.ExecutionErrorTypes.Compilation)
+                   Console.WriteLine("\n\n" + parser.ScriptInstance.GeneratedClassCodeWithLineNumbers);
+                
                 if (CommanderAddinConfiguration.Current.OpenSourceInEditorOnErrors)
 			    {
 				    string fname = Path.Combine(Path.GetTempPath(), "Commander_Compiled_Code.cs");
