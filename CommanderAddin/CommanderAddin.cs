@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -160,60 +161,30 @@ namespace CommanderAddin
                 Console.SetOut(consoleWriter);             
 		    }
 
+
+            AddinModel.AppModel.Window.ShowStatusProgress("Executing Command '" + command.Name + "'...");
+
             var parser = new ScriptParser();
             bool result = await parser.EvaluateScriptAsync(code, AddinModel);
 
             if (!result)
             {
-                if (!showConsole)
+                var msg = parser.ErrorMessage;
+                if (parser.ScriptInstance.ErrorType == Westwind.Scripting.ExecutionErrorTypes.Compilation)
+                    msg = "Script compilation error.";
+
+                AddinModel.AppModel.Window.ShowStatusError("Command '" + command.Name + "' execution failed: " + msg);
+                if (showConsole)
                 {
-                    AddinModel.Window.ShowStatus("Addin execution failed: " + parser.ErrorMessage, 6000);
-                    AddinModel.Window.SetStatusIcon(FontAwesomeIcon.Warning, Colors.Red);
-                }
-                else
                     Console.WriteLine($@"*** Script  Error: {parser.ErrorMessage}");
-                
-                if(parser.ScriptInstance.ErrorType == Westwind.Scripting.ExecutionErrorTypes.Compilation)
-                   Console.WriteLine("\n\n" + parser.ScriptInstance.GeneratedClassCodeWithLineNumbers);
-                
-                if (CommanderAddinConfiguration.Current.OpenSourceInEditorOnErrors)
-			    {
-				    string fname = Path.Combine(Path.GetTempPath(), "Commander_Compiled_Code.cs");
-				    File.WriteAllText(fname, parser.ScriptInstance.GeneratedClassCode);
-
-				    var tab = await OpenTab(fname);
-				    File.Delete(fname);
-
-				    if (tab != null)
-				    {
-					    var editor = tab.Tag as MarkdownDocumentEditor;
-					    await editor.SetEditorSyntax("csharp");
-					    await editor.SetMarkdown(parser.ScriptInstance.GeneratedClassCode);
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                        _ = Dispatcher.CurrentDispatcher.InvokeAsync(() =>
-					    {
-						    if (editor.JsEditor == null)
-							    Task.Delay(400);
-						    _ = editor.JsEditor.SetShowLineNumbers(true);
-
-						    if (commanderWindow == null)
-						    {
-							    commanderWindow = new CommanderWindow(this);
-							    commanderWindow.Show();
-						    }
-						    else
-							    commanderWindow.Activate();
-
-					    }, DispatcherPriority.ApplicationIdle);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    }
-			    }
+                    if (parser.ScriptInstance.ErrorType == Westwind.Scripting.ExecutionErrorTypes.Compilation)
+                        Console.WriteLine(parser.ScriptInstance.GeneratedClassCodeWithLineNumbers);
+                }
+            }
+		    else
+		    {
+			   AddinModel.AppModel.Window.ShowStatusSuccess("Command '" + command.Name + "' executed successfully");
 		    }
-		    //else
-		    //{
-			   // AddinModel.Window.ShowStatus("Command execution for " + command.Name + " completed successfully",6000);
-		    //}
 
 
 		    if (showConsole)
