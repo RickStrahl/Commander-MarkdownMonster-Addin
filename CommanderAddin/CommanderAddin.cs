@@ -180,6 +180,7 @@ namespace CommanderAddin
                     if (parser.ScriptInstance.ErrorType == Westwind.Scripting.ExecutionErrorTypes.Compilation)
                         Console.WriteLine(parser.ScriptInstance.GeneratedClassCodeWithLineNumbers);
                 }
+                
             }
 		    else
 		    {
