@@ -84,6 +84,18 @@
                             <TextBlock>Run Command</TextBlock>
                         </StackPanel>
                     </Button>
+                    <Button Name="ToolButtonInfo" Click="ToolButtonMoreInfo_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Icon="InfoCircle"  Foreground="SteelBlue"
+                                            FontSize="15"                                                                                        
+                                            FontWeight="Normal" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
+                                            Margin="5,2,10,0">
+
+                            </fa:FontAwesome>
+
+                            <TextBlock>Documentation</TextBlock>
+                        </StackPanel>
+                    </Button>
                 </ToolBar>
                 </StackPanel>
             </ToolBarPanel>
@@ -94,15 +106,24 @@
                              ScrollViewer.CanContentScroll="True"
                              ItemsSource="{Binding AddinConfiguration.Commands}"  
                              SelectedItem="{Binding ActiveCommand}"
-                             DisplayMemberPath="Name"
                              IsTextSearchCaseSensitive="False"
                              IsTextSearchEnabled="True"                   
                              HorizontalContentAlignment="Stretch"
                              SelectionChanged="ListCommands_SelectionChanged"
                              MouseDoubleClick="ListCommands_OnMouseDoubleClick" 
                              KeyUp="ListCommands_KeyUp">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <fa:ImageAwesome Icon="Code" Foreground="SteelBlue" Height="16" Width="16" Margin="0,0,7,0"  />
+                        <TextBlock Text="{Binding Name}"  />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
 
+
+        
         <Grid Grid.Row="1" Grid.Column="1"  Margin="10,0" Name="ContentGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

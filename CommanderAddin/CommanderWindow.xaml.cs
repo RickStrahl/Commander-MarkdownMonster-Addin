@@ -120,10 +120,16 @@ namespace CommanderAddin
             await Model.Addin.RunCommand(command);            
         }
 
-        private void ToolButtonNewCommand_Click(object sender, RoutedEventArgs e)
+        private async void ToolButtonNewCommand_Click(object sender, RoutedEventArgs e)
         {
-            Model.AddinConfiguration.Commands.Insert(0,new CommanderCommand() {Name = "New Command"});
+            Model.AddinConfiguration.Commands.Insert(0,new CommanderCommand() {Name = "New Command", CommandText = NewCommandText});
             ListCommands.SelectedItem = Model.AddinConfiguration.Commands[0];
+
+            await Dispatcher.Invoke(async () =>
+            {
+                await editor.BrowserInterop.SetSelectionRange(0, 0, 9999999, 0);
+                await editor.BrowserInterop.SetFocus();
+            }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         }
 
 
@@ -235,5 +241,31 @@ namespace CommanderAddin
             TextConsole.Text = string.Empty;
             ConsoleGridRow.Height = new GridLength(0);
         }
+
+        private const string NewCommandText = @"// *** Snippet sample - use what you need or delete
+
+var doc = Model.ActiveDocument;
+var editor = Model.ActiveEditor;
+
+var filename = Model.ActiveDocument.Filename;
+var selection = await Model.ActiveEditor.GetSelection();
+var lineNo = await Model.ActiveEditor.GetLineNumber();
+var line = await Model.ActiveEditor.GetCurrentLine();
+var firstLine = await Model.ActiveEditor.GetLine(0);
+
+var console = Model.AppModel.Console;  // application console panel 
+console.Clear();
+console.WriteLine(""Editor is at line: "" + lineNo);
+console.WriteLine(""First line: "" + firstLine);
+console.WriteLine(""Current line: "" + line);
+
+Model.Window.ShowStatusSuccess(""Command complete."");
+// Model.Window.ShowStatusError(""Command failed."");";
+
+        private void ToolButtonMoreInfo_Click(object sender, RoutedEventArgs e)
+        {
+            ShellUtils.OpenUrl("https://github.com/RickStrahl/Commander-MarkdownMonster-Addin");
+        }
     }
+
 }

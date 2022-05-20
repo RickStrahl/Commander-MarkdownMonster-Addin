@@ -162,7 +162,7 @@ namespace CommanderAddin
 		    }
 
 
-            AddinModel.AppModel.Window.ShowStatusProgress("Executing Command '" + command.Name + "'...");
+            AddinModel.AppModel.Window.ShowStatusProgress("Executing Command '" + command.Name + "' started...",3500);
 
             var parser = new ScriptParser();
             bool result = await parser.EvaluateScriptAsync(code, AddinModel);
@@ -183,8 +183,8 @@ namespace CommanderAddin
             }
 		    else
 		    {
-			   AddinModel.AppModel.Window.ShowStatusSuccess("Command '" + command.Name + "' executed successfully");
-		    }
+			   //AddinModel.AppModel.Window.ShowStatusSuccess("Command '" + command.Name + "' executed successfully");
+            }
 
 
 		    if (showConsole)

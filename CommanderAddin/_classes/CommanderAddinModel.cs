@@ -64,8 +64,6 @@ namespace CommanderAddin
         /// </summary>
         public MainWindow Window { get; set; }
                 
-
-        
         /// <summary>
         /// Holds the currently active command instance in the
         /// editor/viewer.

@@ -160,6 +160,7 @@ namespace CommanderAddin
                 "System.Data.SqlClient",
                 "System.Linq",
                 "System.Windows",
+                "System.Windows.Controls",
                 "System.Collections.Generic",
 
                 "Newtonsoft.Json",
