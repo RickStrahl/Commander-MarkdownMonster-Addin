@@ -4,7 +4,7 @@
 
 <img src="icon.png" Height="128"  />
 
-This addin allows you to script [Markdown Monster](https://markdownmonster.west-wind.com) via C# script code. It's an easy way to add quick automation features to Markdown Monster without creating a [full blown Markdown Monster .NET Addin](http://markdownmonster.west-wind.com/docs/_4ne0s0qoi.htm).
+This addin allows you to script [Markdown Monster](https://markdownmonster.west-wind.com) via C# script code that is compiled and executed dynamically. It's an easy way to add quick automation features to Markdown Monster without the complexities creating a [full Markdown Monster .NET Addin](http://markdownmonster.west-wind.com/docs/_4ne0s0qoi.htm).
 
 ![](CommanderAddin/screenshot.png)
 
@@ -15,16 +15,17 @@ Some things you can do:
 * Launch a new process 
 * Open documents or folders in an external Program
 * Load data from a database and embed it in a document
-* Open a Git Client in the right folder context
+* Open current document in another editor at line number
 * Open all related documents
+* Open a Git Client in the right folder context
 * Launch an image optimizer to optimize all images
 * Create pre-filled documents into the editor  
-(which you can also do with the [Snippets addin]())
+*(you can also do this with the [Snippets addin](https://markdownmonster.west-wind.com/docs/_5gs0uc49h.htm))*
 * etc.
 
-Using the Command Addin you can saccess the [Markdown Monster Application Model](http://markdownmonster.west-wind.com/docs/_5dv018sft.htm) (via `Model.AppModel`) to access many of the core Markdown Document and UI features that let you automate and act upon open or selected documents in the editor.
+Using the Command Addin you can access the [Markdown Monster Application Model](https://markdownmonster.west-wind.com/docs/_67613zlo8.htm) (via `Model.AppModel`) to access many of the core Markdown Document and UI features that let you automate and act upon open or selected documents in the editor.
 
-You can tie a hot key to a script (may require a restart of the application) to make functionality more easily accessible as well.
+Snippets can be manually executed and debugged, or you can can  tie a keyboard shortcut to a Commander script and invoke it directly without the Snippet Form being active.
 
 ### Features
 Commander has the following  useful features:
@@ -37,12 +38,12 @@ Commander has the following  useful features:
 * Console Output
 * Language Features
     * Latest C# compiler features
+    * Async support <small>(required for most editor access now)</small>
     * Compilation and Runtime Error reporting
     * Source Code display
 
-
 ### C# Script Execution
-Scripts are executed as C# code that is compiled dynamically as 'in memory' assemblies. The addin caches generated assemblies so that multiple executions don't keep generating new assemblies.
+Scripts are executed as C# code that is compiled dynamically as 'in memory' assemblies. The addin caches generated assemblies so that multiple executions don't keep generating new assemblies on repeated use.
 
 You can execute any .NET code as long as you can reference the required assemblies you need for your code.
 
@@ -66,9 +67,9 @@ Scripts execute in the context of a class method in the following format:
 33.  
 34.  var pi = Process.Start(exe,"\"" + docFile + "\"");
 35.  if (pi != null)
-36.      Model.Window.ShowStatus("Smartgit started...",5000);
+36.      Model.Window.ShowStatusSuccess("Smartgit started...");
 37.  else
-38.      Model.Window.ShowStatus("Failed to load Smartgit...",5000);
+38.      Model.Window.ShowStatusError("Failed to load Smartgit...");
 39.  
 40.  
 42.  return null;  // generated
@@ -77,15 +78,16 @@ Scripts execute in the context of a class method in the following format:
 
 The method is passed a `CommanderAddinModel` instance which is made available as a `Model` variable. This type exposes most of the common top level objects in Markdown Monster plus MM's main application model:
 
-* **[AppModel](http://markdownmonster.west-wind.com/docs/_5dv018sft.htm)**  
+* **[AppModel](https://markdownmonster.west-wind.com/docs/_67613zlo8.htm)**  
 Markdown Monster's Main Application Model that gives access to configuration, window, document, editor, addins and much more. A subset of the properties on this object are exposed in this AddinModel reference for easier access.
-* **[Window](http://markdownmonster.west-wind.com/docs/_5dv018t7x.htm)**  
+* **[Window](https://markdownmonster.west-wind.com/docs/_67613zmkj.htm)**  
 The main Markdown Monster UI Window which includes access to open tabs, the folder browser and more.
-* **[ActiveDocument](http://markdownmonster.west-wind.com/docs/_5dv018tmz.htm)**  
+* **[ActiveDocument](https://markdownmonster.west-wind.com/docs/_67613zn74.htm)**  
 The document in the active tab. Contains the content, filename, load and save operations etc.
-* **[ActiveEditor](http://markdownmonster.west-wind.com/docs/_5dv018twa.htm)**  
+* **[ActiveEditor](https://markdownmonster.west-wind.com/docs/_67613znkb.htm)**  
 provides access to the active editor instance, for manipulating the document's content in the editor.
-* **Window.FolderBrowser**  
+
+* **[Window.FolderBrowser](https://markdownmonster.west-wind.com/docs/_67613zhzo.htm)**  
 lets you access the open folder browser or open a new folder in the folder browser.
 
 Methods are executed as code snippets so you don't need to return a value. However, if you need to exit early from a snippet use `return null` or `return someValue`. 
@@ -105,7 +107,7 @@ If you do need to load additional assemblies you can do so using special referen
 using System.Windows.Forms;
 
 // Your method code here
-System.Windows.MessageBox.Show("Got it!");
+MessageBox.Show("Got it!");
 ```
 
 ##### #r <assemblyDll>
@@ -131,7 +133,7 @@ Both of these commands have to be specified at the top of the script text as the
 > ```
 
 #### Error Handling
-The Command Addin has support for capturing and displaying Compiler and Runtime errors in the Console Output of the interface.
+The Commander Addin has support for capturing and displaying Compiler and Runtime errors in the Console Output of the interface.
 
 ![](CommanderAddin/ErrorInConsole.png)
 
@@ -150,23 +152,33 @@ The following script in the figure retrieves the active document's filename, the
 
 Here are a few more useful examples that you can cut and paste right into the Commander Addin for your own use:
 
-#### Open in SmartGit
-Example demonstrates how to launch an external process and open a folder in a GIT client using the .NET `Process` class.
+#### Open in Vs Code
+Here's a simple example that opens the currently open document in VS Code. The following code first saves any pending changes, then opens VS Code via `Process.Start()` at the current line number.
 
 ```cs
-var docFile = Model?.ActiveDocument?.Filename;
-if(docFile == null)
-    return false;
+var docFile = Model.ActiveDocument.Filename;
+if (string.IsNullOrEmpty(docFile))
+	return null;
 
-var pf =  Environment.GetEnvironmentVariable("ProgramW6432");
-var folder = Path.Combine(pf,"SmartGit\\bin");
-var exe = Path.Combine(folder,"smartgit.exe");
+Model.Window.SaveFile();
 
-var pi = Process.Start(exe,"\"" + docFile + "\"");
+var exe = @"C:\Program Files\Microsoft VS Code\Code.exe";
+
+Process pi = null;
+try {
+	var lineNo = await Model.ActiveEditor.GetLineNumber();
+	pi = Process.Start(exe,"-g \"" + docFile + $":{lineNo}\"");
+}
+catch(Exception ex) {
+	Model.Window.ShowStatusError("Couldn't open editor: " + ex.Message);
+	return null;
+}
+
 if (pi != null)
-    Model.Window.ShowStatus("Smartgit started...",5000);
+    Model.Window.ShowStatusSuccess($"VS Code  started with: {docFile}");
 else
-    Model.Window.ShowStatus("Failed to load Smartgit...",5000);
+    Model.Window.ShowStatusError("Failed to start VS Code.");
+
 ```
 
 #### Open All Documents in a Folder in MM
@@ -174,10 +186,11 @@ The following retrieves the active document's filename and based on that gets a 
 
 ```cs
 #r Westwind.Utilities.dll
-
 using Westwind.Utilities;
+
 using System.Windows;
-using System.IO;
+using System.Windows.Threading;
+
 
 var doc = Model.ActiveDocument.Filename;
 var docPath = Path.GetDirectoryName(doc);
@@ -187,7 +200,7 @@ Console.WriteLine("Markdown Files in: " + docPath);
 foreach(var file in Directory.GetFiles(docPath,"*.md"))
 {
     Console.WriteLine(" - " + file + " - " + 
-                     StringUtils.FromCamelCase(Path.GetFileName(file)));    
+    	StringUtils.FromCamelCase(Path.GetFileName(file)));    
 }
 
 if(MessageBox.Show("Do you want to open these Markdown Files?",
@@ -195,9 +208,15 @@ if(MessageBox.Show("Do you want to open these Markdown Files?",
                  MessageBoxButton.YesNo,
                  MessageBoxImage.Information) == MessageBoxResult.Yes)
 {
+	TabItem tab = null;
     foreach(var file in Directory.GetFiles(docPath,"*.md"))
-        Model.Window.OpenTab(file);
-}        
+    {
+    	tab = await Model.Window.OpenTab(file, batchOpen: true);
+        await Task.Delay(80);
+    }
+    if (tab != null)
+    	await Model.Window.ActivateTab(tab);
+}  
 ```
 
 Note that the `Westwind.Utilities` assembly and namespace definitions are actually optional since they are automatically included in the default list of added assemblies and namespaces - they serve mainly for demonstration purposes.
@@ -238,6 +257,7 @@ Console.WriteLine(result == 0 ? "Success" : "Nothing to push. Exit Code: " + res
 Here's a command that opens the active FolderBrowser item in Visual Studio Code. It uses the FolderBrowser's `GetSelectedPathItem()` method to retrieve the Path item from and extracts the filename then tries to find VS Code to open the file
 
 ```cs
+// Select a file or folder or the empty space for the current folder
 var folderBrowser = Model.Window?.FolderBrowser as FolderBrowerSidebar;
 
 string docFile = null;
@@ -245,34 +265,88 @@ string docFile = null;
 var item = folderBrowser.GetSelectedPathItem();
 docFile = item?.FullPath;
 
+Console.WriteLine(docFile);
+
 if (string.IsNullOrEmpty(docFile) || docFile == ".." ||
    (!File.Exists(docFile) && !Directory.Exists(docFile) ))
 {
     docFile = Model?.ActiveDocument?.Filename;
     if (docFile == null)
-        return false;
+        return null;
 }
 
-var exe = @"%localappdata%\Programs\Microsoft VS Code\Code.exe";
-exe = Environment.ExpandEnvironmentVariables(exe);
-
+var exe = @"C:\Program Files\Microsoft VS Code\Code.exe";
 var pi = Process.Start(exe,"\"" + docFile + "\"");
 if (pi != null)
-    Model.Window.ShowStatus($"VS Code  started with: {docFile}",5000);
+    Model.Window.ShowStatusSuccess($"VS Code  started with: {docFile}");
 else
-    Model.Window.ShowError("Failed to start VS Code.");
-
+    Model.Window.ShowStatusError("Failed to start VS Code.");
 ```
 
-#### Print an Assembly List
-This is a trivial example, but useful to track what assemblies and addins were loaded by Markdown Monster.
+
+#### 
 
 ```cs
-var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+#r Microsoft.VisualBasic.dll
+using Microsoft.VisualBasic;
+using System.IO;
 
-foreach(var assembly in assemblies)
+var doc = Model.ActiveDocument;
+var editor = Model.ActiveEditor;
+var currentLineNbr = await editor.GetLineNumber();
+
+int lineNbr = 0;
+bool found = false;
+string token = "grateful or anticipating:";
+string bullets = "";
+
+DateTime today = DateTime.Today;
+
+string userDate = Interaction.InputBox("Enter DateTime (yyyy-mm-dd)","DateTime", today.ToString("yyyy-MM-dd") , 600, 300);
+
+string dt = Convert.ToDateTime(userDate).AddDays(-7).ToString("yyyy-MM-dd");
+
+while (lineNbr < currentLineNbr)
 {
-	Console.WriteLine(assembly);
+    string line = await editor.GetLine(lineNbr);
+    if (line.Trim().ToLower() == "## today " + dt)
+    {
+        found = true;
+    }
+    if (found) 
+    {
+        if (line.Trim().ToLower().StartsWith(token))
+        {
+            bullets += "    *   " + line.Trim().Substring(token.Length) + "\r\n";
+        }
+    }
+    lineNbr++;
+}
+
+string wupdate = @"Weekly Update " + userDate + @"
+========================
+Work Highlights
+---------------
+*   
+
+Personal Highlights
+-------------------
+*   
+*   Last week's anticipating/gratitudes
+" + bullets + @"
+
+Week Starting " + userDate + @"
+========================
+*   
+";
+
+if(MessageBox.Show(wupdate,"Embed this into Document?",MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
+{
+	await editor.SetSelection(wupdate);
+	await editor.SetCursorPosition(3, currentLineNbr + 5 );	
+
+	await Model.ActiveEditor.SetEditorFocus();
 }
 ```
+
 
