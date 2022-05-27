@@ -40,7 +40,7 @@ namespace CommanderAddin
             // hook up OnExecute/OnExecuteConfiguration/OnCanExecute
             var menuItem = new AddInMenuItem(this)
             {
-                Caption = "Commander Command Line Execution Launcher",
+                Caption = "Commander C# Script Automation",
                 FontawesomeIcon = FontAwesomeIcon.Terminal,
                 KeyboardShortcut = CommanderAddinConfiguration.Current.KeyboardShortcut
             };
@@ -51,7 +51,6 @@ namespace CommanderAddin
             }
             catch { }
 
-    
 
             // if you don't want to display config or main menu item clear handler
             //menuItem.ExecuteConfiguration = null;                
