@@ -1,10 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using FontAwesome.WPF;
 using MarkdownMonster;
 using Westwind.Utilities;
@@ -67,8 +69,10 @@ namespace CommanderAddin
 
         private MarkdownEditorSimple editor;
 
-        private void CommandsWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void CommandsWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            await Task.Delay(1);
+
             string initialValue = null;
 
             if (Model.AddinConfiguration.Commands.Count > 0)
@@ -86,7 +90,8 @@ namespace CommanderAddin
                     initialValue = selectedItem.CommandText;
             }
 
-            editor = new MarkdownEditorSimple(WebBrowserCommand, initialValue, "csharp");         
+            editor = new MarkdownEditorSimple(WebBrowserCommand, initialValue, "csharp");
+            editor.ShowLineNumbers = true;
             editor.IsDirtyAction = (isDirty, newText, oldText) =>
             {
                 if (newText != null && Model.ActiveCommand != null)
@@ -95,11 +100,7 @@ namespace CommanderAddin
                 return newText != oldText;
             };
 
-            Dispatcher.InvokeAsync(() =>
-            {
-                ListCommands.Focus();
-                _ = editor.BrowserInterop.SetLanguage("csharp");                
-            },System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            Dispatcher.Invoke(() => ListCommands.Focus(), DispatcherPriority.ApplicationIdle);
 
             pageLoaded = true;
         }

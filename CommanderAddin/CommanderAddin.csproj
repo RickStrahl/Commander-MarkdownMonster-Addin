@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <Version>0.16</Version>
+    <Version>0.20</Version>
     <TargetFramework>net472</TargetFramework>
     <!--<TargetFrameworks>net472;netcoreapp3.0</TargetFrameworks>-->
     <AssemblyName>CommanderAddin</AssemblyName>
@@ -25,16 +25,17 @@
 		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1210.39">
 			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Westwind.Scripting" version="1.0.5">
+		<PackageReference Include="Westwind.Scripting" version="1.1.1">
 			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
 		<!--<ProjectReference Include="..\..\..\Libraries\Westwind.Scripting\Westwind.Scripting\Westwind.Scripting.csproj" />-->
 	</ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472'">
-		<Reference Include="$(LocalAppData)\Markdown Monster\MarkdownMonster.exe">
-      <Private>false</Private>
-    </Reference>
+		<!--<Reference Include="$(LocalAppData)\Markdown Monster\MarkdownMonster.exe">-->
+		<Reference Include="C:\projects\MarkdownMonsterCode\MarkdownMonster\bin\Release\net472\win-x64\MarkdownMonster.exe">
+			<Private>false</Private>
+		</Reference>
   </ItemGroup>
 
   <ItemGroup>

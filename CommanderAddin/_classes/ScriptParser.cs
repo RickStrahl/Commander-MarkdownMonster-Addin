@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using MarkdownMonster;
+using MahApps.Metro.Controls;
 using Westwind.Scripting;
 using Westwind.Utilities;
 
@@ -56,48 +52,8 @@ namespace CommanderAddin
         public async Task<bool> EvaluateScriptAsync(string code, CommanderAddinModel model = null)
         {
             ScriptInstance = CreateScriptObject();
-            
-            var snippetLines = StringUtils.GetLines(code);
-            var sb = new StringBuilder();
-            foreach (var line in snippetLines)
-            {
-                if (line.Trim().Contains("#r "))
-                {
-                    string assemblyName = line.Replace("#r ", "").Trim();
-
-                    if (assemblyName.Contains("\\") || assemblyName.Contains("/"))
-                    {
-                        ErrorMessage = "Assemblies loaded from external folders are not allowed: " + assemblyName +
-                                       "\r\n\r\n" +
-                                       "Referenced assemblies can only be loaded out of the Markdown Monster startup folder.";
-                        return false;
-                    }
-
-                    var fullAssemblyName = FileUtils.GetPhysicalPath(assemblyName);
-                    if (File.Exists(fullAssemblyName))
-                        assemblyName = fullAssemblyName;
-
-                    // Add to Engine since host is already instantiated
-                    ScriptInstance.AddAssembly(assemblyName);
-                    continue;
-                }
-
-                if (line.Trim().Contains("using ") && !line.Contains("("))
-                {
-                    string ns = line.Replace("using ", "").Replace(";", "").Trim();
-
-                    if (!ScriptInstance.Namespaces.Contains("using " + ns + ";"))
-                        ScriptInstance.AddNamespace(ns);
-                    continue;
-                }
-
-                sb.AppendLine(line);
-            }
 
             string oldPath = Environment.CurrentDirectory;
-
-            code = sb.ToString();
-
             code = "public async Task<string> ExecuteScript(CommanderAddinModel Model)\n" +
                    "{\n" +
                    code + "\n" +
@@ -111,10 +67,62 @@ namespace CommanderAddin
             
             if (ScriptInstance.Error)
             {
+                // fix error offsets so they match just the script code
+                FixupLineNumbersAndErrors(ScriptInstance);  
                 ErrorMessage = ScriptInstance.ErrorMessage;
             }
 
             return !ScriptInstance.Error;
+        }
+
+        public static AdjustCodeLineNumberStatus FixupLineNumbersAndErrors(CSharpScriptExecution script)
+        {
+            var adjusted = new AdjustCodeLineNumberStatus();
+
+            var code = script.GeneratedClassCode;
+
+            var find = "public async Task<string> ExecuteScript(CommanderAddinModel Model)";
+            var lines = StringUtils.GetLines(code);
+            int i = 0;
+            for (i = 0; i < lines.Length; i++)
+            {
+                if (lines[i]?.Trim() == find)
+                    break;
+            }
+
+            if (i < lines.Length -1)
+                adjusted.startLineNumber = i + 2;
+
+            // `(24,1): error CS0246: The type or namespace name...` 
+            lines = StringUtils.GetLines(script.ErrorMessage);
+            for (i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                if (string.IsNullOrEmpty(line))
+                    continue;
+
+                var linePair = StringUtils.ExtractString(line, "(", "):", returnDelimiters: true);
+                if (!linePair.Contains(",")) continue;
+
+                var tokens = linePair.Split(',');
+
+                var lineNo = StringUtils.ParseInt(tokens[0].Substring(1), 0);
+                if (lineNo < adjusted.startLineNumber) continue;
+
+                // update the line number
+                var newError = "(" + (lineNo - adjusted.startLineNumber ) + "," + tokens[1] + line.Replace(linePair, "");
+                lines[i] = newError;
+            }
+
+            var updatedLines = string.Empty;
+            foreach (var line in lines)
+                updatedLines = updatedLines + line + "\n";
+            
+            string.Join(",",lines);
+            adjusted.UpdatedErrorMessage = updatedLines.Trim();
+
+            return adjusted;
+
         }
 
         /// <summary>
@@ -127,27 +135,16 @@ namespace CommanderAddin
             var scripting = new CSharpScriptExecution
             {
                 GeneratedNamespace = "MarkdownMonster.Commander.Scripting",
-                ThrowExceptions = false
+                ThrowExceptions = false,
+                AllowReferencesInCode = true
             };
-            scripting.AddDefaultReferencesAndNamespaces();
+
+            // Use loaded references so **all of MM is available**
+            scripting.AddLoadedReferences();
+                //.AddDefaultReferencesAndNamespaces();
 
             scripting.AddAssembly(typeof(CommanderAddin));
 
-            scripting.AddAssemblies(
-                "System.Drawing.dll",
-                "System.Windows.Forms.dll",
-                "System.Data.dll",
-                "MarkdownMonster.exe",
-
-                "Westwind.Utilities.dll",
-                "System.Configuration.dll",
-
-                "WPF\\PresentationCore.dll",
-                "WPF\\PresentationUI.dll",
-                "WPF\\PresentationFramework.dll",
-                "WPF\\WindowsBase.dll",
-                "System.Xaml.dll",
-                "Newtonsoft.Json.dll");
 
             scripting.AddNamespaces("System",
                 "System.Threading.Tasks",
@@ -170,12 +167,16 @@ namespace CommanderAddin
                 "MarkdownMonster.Windows",
                 "Westwind.Utilities",
                 "CommanderAddin");
-
-
+            
             scripting.SaveGeneratedCode = true;
 
             return scripting;
         }
     }
 
+    public class AdjustCodeLineNumberStatus
+    {
+        public string UpdatedErrorMessage { get; set;  }
+        public int startLineNumber { get; set;  }
+    }
 }

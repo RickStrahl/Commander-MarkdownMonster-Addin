@@ -160,8 +160,7 @@ namespace CommanderAddin
                 Console.SetOut(consoleWriter);             
 		    }
 
-
-            AddinModel.AppModel.Window.ShowStatusProgress("Executing Command '" + command.Name + "' started...",3500);
+            AddinModel.AppModel.Window.ShowStatusProgress("Executing Command '" + command.Name + "' started...");
 
             var parser = new ScriptParser();
             bool result = await parser.EvaluateScriptAsync(code, AddinModel);
@@ -175,15 +174,25 @@ namespace CommanderAddin
                 AddinModel.AppModel.Window.ShowStatusError("Command '" + command.Name + "' execution failed: " + msg);
                 if (showConsole)
                 {
-                    Console.WriteLine($@"*** Script  Error: {parser.ErrorMessage}");
                     if (parser.ScriptInstance.ErrorType == Westwind.Scripting.ExecutionErrorTypes.Compilation)
-                        Console.WriteLine(parser.ScriptInstance.GeneratedClassCodeWithLineNumbers);
+                    {
+                        var adjusted = ScriptParser.FixupLineNumbersAndErrors(parser.ScriptInstance);
+                        parser.ErrorMessage = adjusted.UpdatedErrorMessage;
+                        Console.WriteLine($"*** Script Compilation  Errors:\n{parser.ErrorMessage}\n");
+
+                        Console.WriteLine("\n*** Generated Code:");
+                        Console.WriteLine(parser.ScriptInstance.GeneratedClassCode);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"*** Runtime Execution Error:\n{parser.ErrorMessage}\n");
+                    }
                 }
-                
             }
 		    else
-		    {
-			   //AddinModel.AppModel.Window.ShowStatusSuccess("Command '" + command.Name + "' executed successfully");
+            {
+                if (mmApp.Model.Window.StatusText.Text.StartsWith("Executing Command ")) 
+                    AddinModel.AppModel.Window.ShowStatusSuccess("Command '" + command.Name + "' executed successfully");
             }
 
 

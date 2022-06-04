@@ -55,25 +55,33 @@ Scripts include default assemblies and namespaces that are used in Markdown Mons
 Scripts execute in the context of a class method in the following format:
 
 ```cs
-24.  public object ExecuteCode(params object[] parameters)
-25.  {dynamic Model = parameters[0];
-26.  var docFile = Model?.ActiveDocument?.Filedname;
-27.  if(docFile == null)
-28.      return false;
-29.  
-30.  var pf =  Environment.GetEnvironmentVariable("ProgramW6432");
-31.  var folder = Path.Combine(pf,"SmartGit\\bin");
-32.  var exe = Path.Combine(folder,"smartgit.exe");
-33.  
-34.  var pi = Process.Start(exe,"\"" + docFile + "\"");
-35.  if (pi != null)
-36.      Model.Window.ShowStatusSuccess("Smartgit started...");
-37.  else
-38.      Model.Window.ShowStatusError("Failed to load Smartgit...");
-39.  
-40.  
-42.  return null;  // generated
-43.  }
+public async Task<string> ExecuteScript(CommanderAddinModel Model)
+{
+	// YOUR CODE GOES BELOW
+
+	// #r Westwind.Utilities.dll
+	// using System.Net;
+	
+	var s = StringUtils.ExtractString("testing","te","ng");
+	Console.WriteLine(s);
+	
+	for(int x = 1;   x++) {
+	    Console.sWriteLine( x.ToString() + "...");
+	    if (x < 3)
+	    await Task.Delay(1000);   // async allowed
+	}
+	
+	
+	using (var client = new WebClient())
+	{
+	    var uri = new Uri("https://albumviewer.west-wind.com/api/album/37");
+	    Console.WriteLine(await client.DownloadStringTaskAsync(uri));
+	}
+	
+	// END OF YOUR CODE 
+	
+	return "OK";    // generated to produce a result value
+}
 ```
 
 The method is passed a `CommanderAddinModel` instance which is made available as a `Model` variable. This type exposes most of the common top level objects in Markdown Monster plus MM's main application model:
@@ -139,11 +147,12 @@ The Commander Addin has support for capturing and displaying Compiler and Runtim
 
 Each script is generated into a self-contained CSharp class that is compiled into its own assembly and then loaded and executed from the generated in-memory assembly. 
 
-If there are source code errors that cause a compiler error, the Addin displays the compiler error messages along with the line number where errors occurred.
+If there are source code errors that cause a compilation error, the Addin displays the compiler error messages along with the line number where errors occurred which are adjusted for your code and match the line numbers in the script editor.
 
-Runtime errors capture the last Call Stack information and provide the last executing line of code that caused the error. This may not always represent the real source of the error since you are executing generated code, but often it does provide some insight into code generated.
+Runtime errors capture only the error as it occurs in the code. Unfortunately no 
 
-Both Compiler and Runtime errors also display the source code along with line numbers so you can co-relate compiler errors to specific lines in the source code:
+the last Call Stack information and provide the last executing line of code that caused the error. This may not always represent the real source of the error since you are executing generated code, but often it does provide some insight into code generated.
+
 
 ### Simple Examples
 The following script in the figure retrieves the active document's filename, then shows a directory listing of Markdown Files in the same folder in the Console, and then asks if you want to open the listed files in the editor:
