@@ -46,7 +46,7 @@ namespace CommanderAddin
                     {
                         Name = "Open in VsCode",
                         CommandText =
-                            "var docFile = Model.ActiveDocument.Filename;\nif (string.IsNullOrEmpty(docFile))\n\treturn null;\n\nModel.Window.SaveFile();\n\nvar exe = @\"C:\\Program Files\\Microsoft VS Code\\Code.exe\";\nexe = Environment.ExpandEnvironmentVariables(exe);\n\nProcess pi = null;\ntry {\n\tvar lineNo = await Model.ActiveEditor.GetLineNumber();\n\tpi = Process.Start(exe,\"-g \\\"\" + docFile + $\":{lineNo + 1}\\\"\");\n}\ncatch(Exception ex) {\n\tModel.Window.ShowStatusError(\"Couldn't open editor: \" + ex.Message);\n\treturn null;\n}\n\nif (pi != null)\n    Model.Window.ShowStatus($\"VS Code  started with: {docFile}\",5000);\nelse\n    Model.Window.ShowStatusError(\"Failed to start VS Code.\");\n",
+                            "var docFile = Model?.ActiveDocument?.Filename;\nif (string.IsNullOrEmpty(docFile))\n\treturn null;\n\nModel.Window.SaveFile();\n\nvar exe = @\"%ProgramFiles\\Microsoft VS Code\\Code.exe\";\nexe = Environment.ExpandEnvironmentVariables(exe);\n\nProcess pi = null;\ntry {\n\tvar lineNo = await Model.ActiveEditor.GetLineNumber();\n\tpi = Process.Start(exe,\"-g \\\"\" + docFile + $\":{lineNo + 1}\\\"\");\n}\ncatch(Exception ex) {\n\tModel.Window.ShowStatusError(\"Couldn't open editor: \" + ex.Message);\n\treturn null;\n}\n\nif (pi != null)\n    Model.Window.ShowStatus($\"VS Code  started with: {docFile}\",5000);\nelse\n    Model.Window.ShowStatusError(\"Failed to start VS Code.\");\n",
                         KeyboardShortcut = "Alt-Shift-V"
                     });
             }

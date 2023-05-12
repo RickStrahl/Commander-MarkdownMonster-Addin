@@ -178,7 +178,7 @@ namespace CommanderAddin
                     {
                         var adjusted = ScriptParser.FixupLineNumbersAndErrors(parser.ScriptInstance);
                         parser.ErrorMessage = adjusted.UpdatedErrorMessage;
-                        Console.WriteLine($"*** Script Compilation  Errors:\n{parser.ErrorMessage}\n");
+                        Console.WriteLine($"*** Script Compilation Errors:\n{parser.ErrorMessage}\n");
 
                         Console.WriteLine("\n*** Generated Code:");
                         Console.WriteLine(parser.ScriptInstance.GeneratedClassCode);

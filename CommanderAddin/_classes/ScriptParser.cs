@@ -54,13 +54,13 @@ namespace CommanderAddin
             ScriptInstance = CreateScriptObject();
 
             string oldPath = Environment.CurrentDirectory;
-            code = "public async Task<string> ExecuteScript(CommanderAddinModel Model)\n" +
+            code = "public async Task ExecuteScript(CommanderAddinModel Model)\n" +
                    "{\n" +
                    code + "\n" +
-                   "return \"ok\";\n" +
                    "}";
+            // "return \"ok\";\n" +
 
-            string res = await ScriptInstance.ExecuteMethodAsync<string>(code, "ExecuteScript", model);            
+            await ScriptInstance.ExecuteMethodAsync(code, "ExecuteScript", model);            
 
             Directory.SetCurrentDirectory(oldPath);
 
@@ -81,7 +81,7 @@ namespace CommanderAddin
 
             var code = script.GeneratedClassCode;
 
-            var find = "public async Task<string> ExecuteScript(CommanderAddinModel Model)";
+            var find = "public async Task ExecuteScript(CommanderAddinModel Model)";
             var lines = StringUtils.GetLines(code);
             int i = 0;
             for (i = 0; i < lines.Length; i++)
@@ -144,6 +144,7 @@ namespace CommanderAddin
                 //.AddDefaultReferencesAndNamespaces();
 
             scripting.AddAssembly(typeof(CommanderAddin));
+
 
 
             scripting.AddNamespaces("System",
