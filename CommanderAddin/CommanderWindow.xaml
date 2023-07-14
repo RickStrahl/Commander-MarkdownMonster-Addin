@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CommanderAddin"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        xmlns:fa6="http://schemas.fontawesome.com/icons/fonts"
         mc:Ignorable="d"                            
         Title="Commander C# Script Execution " TitleCharacterCasing="Normal"                
         WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
@@ -17,43 +17,42 @@
         
         WindowTransitionsEnabled="False">
     <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions >
-                <RowDefinition Height="30" />
-                <RowDefinition Height="*"  />
-                <RowDefinition Height="30" />
-            </Grid.RowDefinitions>
-            
-            <ToolBarPanel Name="ToolbarPanelMain" Grid.Row="0" Grid.ColumnSpan="2">
-                <ToolBarPanel.Resources>
-                    <Style x:Key="ToolbarIconRectangleStyle" TargetType="Rectangle">
-                        <Style.Setters>
-                            <Setter Property="Height" Value="16" />
-                            <Setter Property="Width" Value="16" />
-                        </Style.Setters>
-                        <Style.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Opacity" Value="0.5" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ToolBarPanel.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions >
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*"  />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+
+        <ToolBarPanel Name="ToolbarPanelMain" Grid.Row="0" Grid.ColumnSpan="2">
+            <ToolBarPanel.Resources>
+                <Style x:Key="ToolbarIconRectangleStyle" TargetType="Rectangle">
+                    <Style.Setters>
+                        <Setter Property="Height" Value="16" />
+                        <Setter Property="Width" Value="16" />
+                    </Style.Setters>
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ToolBarPanel.Resources>
 
 
-                <StackPanel Orientation="Horizontal">
-                    <ToolBar Name="ToolbarFile" >
+            <StackPanel Orientation="Horizontal">
+                <ToolBar Name="ToolbarFile" >
 
                     <Button Name="ToolButtonNewCommand" Click="ToolButtonNewCommand_Click">
                         <StackPanel Orientation="Horizontal">
-                            <fa:FontAwesome Icon="PlusCircle"  Foreground="Green"
+                            <fa6:FontAwesome Icon="Solid_CirclePlus"  Foreground="ForestGreen"
                                             FontSize="15"                                                                                        
-                                            FontWeight="Normal" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
                                             Margin="5,2,5,0">
 
-                            </fa:FontAwesome>
+                            </fa6:FontAwesome>
 
                             <TextBlock>Add Command</TextBlock>
                         </StackPanel>
@@ -61,12 +60,11 @@
 
                     <Button Name="ToolButtonRemoveCommand" Click="ToolButtonRemoveCommand_Click">
                         <StackPanel Orientation="Horizontal">
-                            <fa:FontAwesome Icon="Remove"  Foreground="Red"
-                                            FontSize="15"                                                                                        
-                                            FontWeight="Normal" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
-                                            Margin="5,2,10,0">
-
-                            </fa:FontAwesome>
+                            <fa6:FontAwesome Icon="Solid_Xmark"
+                                             Foreground="Firebrick"
+                                            FontSize="16"
+                                             Margin="5,2,10,0">
+                            </fa6:FontAwesome>
 
                             <TextBlock>Remove Command</TextBlock>
                         </StackPanel>
@@ -76,29 +74,26 @@
                 <ToolBar>
                     <Button Name="ToolButtonRunSnippet" Click="ToolButtonRunCommand_Click">
                         <StackPanel Orientation="Horizontal">
-                            <fa:FontAwesome Icon="Play"  Foreground="Green"
-                                                                                                                                 
-                                            FontWeight="Normal" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
-                                            Margin="5,2,5,0">
-                            </fa:FontAwesome>
+                            <fa6:FontAwesome Icon="Solid_Play"  Foreground="ForestGreen"
+                                             Margin="5,2,5,0">
+                            </fa6:FontAwesome>
                             <TextBlock>Run Command</TextBlock>
                         </StackPanel>
                     </Button>
                     <Button Name="ToolButtonInfo" Click="ToolButtonMoreInfo_Click">
                         <StackPanel Orientation="Horizontal">
-                            <fa:FontAwesome Icon="InfoCircle"  Foreground="SteelBlue"
+                            <fa6:FontAwesome Icon="Solid_CircleInfo"  Foreground="SteelBlue"
                                             FontSize="15"                                                                                        
-                                            FontWeight="Normal" FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" 
                                             Margin="5,2,10,0">
 
-                            </fa:FontAwesome>
+                            </fa6:FontAwesome>
 
                             <TextBlock>Documentation</TextBlock>
                         </StackPanel>
                     </Button>
                 </ToolBar>
-                </StackPanel>
-            </ToolBarPanel>
+            </StackPanel>
+        </ToolBarPanel>
 
 
         <ListBox Grid.Row="1" Grid.Column="0" Name="ListCommands"                             
@@ -115,7 +110,11 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <fa:ImageAwesome Icon="Code" Foreground="SteelBlue" Height="16" Width="16" Margin="0,0,7,0"  />
+                        <fa6:ImageAwesome Icon="Solid_Code" 
+                                          Foreground="SteelBlue" 
+                                          Height="16" 
+                                          Width="16" 
+                                          Margin="0,0,7,0"  />
                         <TextBlock Text="{Binding Name}"  />
                     </StackPanel>
                 </DataTemplate>
@@ -123,7 +122,7 @@
         </ListBox>
 
 
-        
+
         <Grid Grid.Row="1" Grid.Column="1"  Margin="10,0" Name="ContentGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -150,7 +149,7 @@
                              ToolTip="Keyboard shortcut sequence like Alt+Shift+M, Ctrl+Alt+Enter etc. Requires a restart of Markdown Monster to kick in."  />
                 </StackPanel>
             </Grid>
-            
+
             <TextBlock Grid.Row="1" Margin="0,10,0,4">Command C# Code</TextBlock>
 
             <wpf:WebView2 Grid.Row="2"  Name="WebBrowserCommand"/>
@@ -171,11 +170,9 @@
                                             HorizontalAlignment="Left" Height="11" 
                                             Padding="4 2" Focusable="False"
                                             ToolTip="Clear the Console" BorderThickness="0" >
-                                        <fa:FontAwesome Icon="Remove"  Foreground="Firebrick"
+                                        <fa6:FontAwesome Icon="Solid_Xmark"  Foreground="Firebrick"
                                                         FontSize="10"                                                                                        
-                                                        FontWeight="Normal" 
-                                                        FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome">
-                                        </fa:FontAwesome>
+                                                        FontWeight="Normal" />
                                     </Button>
                                 </StackPanel>
                                 <Image Grid.Column="1" Source="hsizegrip.png" Width="30" HorizontalAlignment="center" />
@@ -207,7 +204,7 @@
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem Grid.Column="0" Margin="2,1,0,0">
-                <fa:FontAwesome Name="StatusIcon" Icon="Circle" Foreground="Green"/>
+                <fa6:ImageAwesome Name="StatusIcon" Icon="Solid_Circle" Foreground="ForestGreen" Height="15"/>
             </StatusBarItem>
             <StatusBarItem Grid.Column="1">
                 <TextBlock Width="400" Name="StatusText" x:FieldModifier="public" HorizontalAlignment="Left">Ready</TextBlock>

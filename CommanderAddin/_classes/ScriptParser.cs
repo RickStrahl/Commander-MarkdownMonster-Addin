@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if false
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using MahApps.Metro.Controls;
@@ -58,9 +59,9 @@ namespace CommanderAddin
                    "{\n" +
                    code + "\n" +
                    "}";
-            // "return \"ok\";\n" +
+            //"return true;\n" +
 
-            await ScriptInstance.ExecuteMethodAsync(code, "ExecuteScript", model);            
+            await ScriptInstance.ExecuteMethodAsyncVoid(code, "ExecuteScript", model);            
 
             Directory.SetCurrentDirectory(oldPath);
 
@@ -145,8 +146,6 @@ namespace CommanderAddin
 
             scripting.AddAssembly(typeof(CommanderAddin));
 
-
-
             scripting.AddNamespaces("System",
                 "System.Threading.Tasks",
                 "System.IO",
@@ -181,3 +180,4 @@ namespace CommanderAddin
         public int startLineNumber { get; set;  }
     }
 }
+#endif

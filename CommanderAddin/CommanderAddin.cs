@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using FontAwesome.WPF;
+using FontAwesome6;
 using MarkdownMonster;
 using MarkdownMonster.AddIns;
 using MarkdownMonster.Windows;
@@ -41,7 +41,7 @@ namespace CommanderAddin
             var menuItem = new AddInMenuItem(this)
             {
                 Caption = "Commander C# Script Automation",
-                FontawesomeIcon = FontAwesomeIcon.Terminal,
+                FontawesomeIcon = EFontAwesomeIcon.Terminal,
                 KeyboardShortcut = CommanderAddinConfiguration.Current.KeyboardShortcut
             };
             try
