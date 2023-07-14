@@ -62,7 +62,7 @@
                         <StackPanel Orientation="Horizontal">
                             <fa6:FontAwesome Icon="Solid_Xmark"
                                              Foreground="Firebrick"
-                                            FontSize="16"
+                                             FontSize="16"
                                              Margin="5,2,10,0">
                             </fa6:FontAwesome>
 
@@ -110,10 +110,9 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <fa6:ImageAwesome Icon="Solid_Code" 
+                        <fa6:FontAwesome Icon="Solid_Code" 
                                           Foreground="SteelBlue" 
-                                          Height="16" 
-                                          Width="16" 
+                                          Height="15" 
                                           Margin="0,0,7,0"  />
                         <TextBlock Text="{Binding Name}"  />
                     </StackPanel>

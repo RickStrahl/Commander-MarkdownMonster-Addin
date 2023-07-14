@@ -41,7 +41,7 @@ namespace CommanderAddin
             var menuItem = new AddInMenuItem(this)
             {
                 Caption = "Commander C# Script Automation",
-                FontawesomeIcon = EFontAwesomeIcon.Terminal,
+                FontawesomeIcon = EFontAwesomeIcon.Solid_Terminal,
                 KeyboardShortcut = CommanderAddinConfiguration.Current.KeyboardShortcut
             };
             try

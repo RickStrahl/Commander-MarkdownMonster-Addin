@@ -1,4 +1,4 @@
-﻿#if false
+﻿
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -44,8 +44,6 @@ namespace CommanderAddin
         /// Evaluates the embedded script parsing out {{ C# Expression }} 
         /// blocks and evaluating the expressions and embedding the string
         /// output into the result string.
-        /// 
-        /// 
         /// </summary>
         /// <param name="code">The code to execute
         /// <param name="model">Optional model data accessible in Expressions as `Model`</param>
@@ -145,6 +143,7 @@ namespace CommanderAddin
                 //.AddDefaultReferencesAndNamespaces();
 
             scripting.AddAssembly(typeof(CommanderAddin));
+            scripting.AddAssembly(typeof(CSharpScriptExecution));
 
             scripting.AddNamespaces("System",
                 "System.Threading.Tasks",
@@ -154,7 +153,6 @@ namespace CommanderAddin
                 "System.Drawing",
                 "System.Diagnostics",
                 "System.Data",
-                "System.Data.SqlClient",
                 "System.Linq",
                 "System.Windows",
                 "System.Windows.Controls",
@@ -166,6 +164,7 @@ namespace CommanderAddin
                 "MarkdownMonster",
                 "MarkdownMonster.Windows",
                 "Westwind.Utilities",
+                "Westwind.Scripting",
                 "CommanderAddin");
             
             scripting.SaveGeneratedCode = true;
@@ -180,4 +179,3 @@ namespace CommanderAddin
         public int startLineNumber { get; set;  }
     }
 }
-#endif
