@@ -1,32 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>0.3</Version>
+		<Version>0.3.4</Version>
 		<TargetFramework>net70-windows</TargetFramework>
-		<!--<TargetFrameworks>net472;netcoreapp3.0</TargetFrameworks>-->
 		<AssemblyName>CommanderAddin</AssemblyName>
 		<UseWPF>true</UseWPF>
 
 		<Authors>Rick Strahl, West Wind Technologies</Authors>
 		<Product>Markdown Monster Commander Scripting Addin</Product>
 		<Description>Allows you to create scripts that automate Markdown Monster.</Description>
-		<OutDir>$(AppData)\Markdown Monster\Addins\Commander</OutDir>
+		
+		<OutDir>$(AppData)\Markdown Monster\Addins\Commander</OutDir>		
 	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="MarkdownMonster">
-			<HintPath>..\..\..\MarkdownMonsterCode\MarkdownMonster\bin\Release\net7.0-windows\MarkdownMonster.dll</HintPath>
-			<Private>false</Private>
-			<IncludeAssets>compile</IncludeAssets>
-		</Reference>
-	</ItemGroup>
+
+
 
 	<ItemGroup>
+		<Reference Include="C:\program files\Markdown Monster\MarkdownMonster.dll">
+			<Private>false</Private>
+		</Reference>
+		
+		<!-- Used dependendencies have to to be included explicitly but the don't show up in the output -->
 		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
-		<PackageReference Include="Westwind.Utilities" Version="4.0.2" />
+		<PackageReference Include="Westwind.Utilities" Version="4.0.6.1" />
 		<PackageReference Include="FontAwesome6.Pro.Fonts" Version="2.5.1" />
-		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1823.32" />
-		<PackageReference Include="Westwind.WebView" version="0.1.4.3" />
-		<PackageReference Include="Westwind.Scripting" version="1.3.2" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2045.28" />
+		<PackageReference Include="Westwind.WebView" version="0.1.6" />
+		<PackageReference Include="Westwind.Scripting" version="1.3.3" />
 	</ItemGroup>
 
 	<ItemGroup>
