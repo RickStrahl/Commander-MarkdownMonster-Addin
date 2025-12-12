@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>0.3.4</Version>
-		<TargetFramework>net70-windows</TargetFramework>
+		<Version>0.4</Version>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<AssemblyName>CommanderAddin</AssemblyName>
 		<UseWPF>true</UseWPF>
 
@@ -10,7 +10,7 @@
 		<Product>Markdown Monster Commander Scripting Addin</Product>
 		<Description>Allows you to create scripts that automate Markdown Monster.</Description>
 		
-		<OutDir>$(AppData)\Markdown Monster\Addins\Commander</OutDir>		
+		<OutDir>C:\Users\rstrahl\Dropbox\Markdown Monster\Addins\Commander</OutDir>		
 	</PropertyGroup>
 
 
@@ -21,12 +21,12 @@
 		</Reference>
 		
 		<!-- Used dependendencies have to to be included explicitly but the don't show up in the output -->
-		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
-		<PackageReference Include="Westwind.Utilities" Version="4.0.6.1" />
+		<PackageReference Include="MahApps.Metro" Version="2.4.11"  />
+		<PackageReference Include="Westwind.Utilities" Version="5.2.0" />
 		<PackageReference Include="FontAwesome6.Pro.Fonts" Version="2.5.1" />
-		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2045.28" />
-		<PackageReference Include="Westwind.WebView" version="0.1.6" />
-		<PackageReference Include="Westwind.Scripting" version="1.3.3" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3650.58" />
+		<PackageReference Include="Westwind.WebView" version="0.3.8" />
+		<PackageReference Include="Westwind.Scripting" version="1.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>
