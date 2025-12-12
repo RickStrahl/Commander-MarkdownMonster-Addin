@@ -1,8 +1,9 @@
 {
-  "profiles": {
-    "CommanderAddin-MM-Debug": {
-      "executablePath": "d:\\projects\\MarkdownMonsterCode\\MarkdownMonster\\bin\\Release\\net7.0-windows\\MarkdownMonster.exe",      
-      "commandLineArgs": ""
+  "profiles": {    
+    "Debug-Addin-MM-Exe": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Markdown Monster\\MarkdownMonster.exe",
+      "workingDirectory": "C:\\Program Files\\Markdown Monster"
     }
   }
 }

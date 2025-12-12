@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Version>0.4</Version>
-		<TargetFramework>net10.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>	
 		<AssemblyName>CommanderAddin</AssemblyName>
 		<UseWPF>true</UseWPF>
 
@@ -29,9 +29,6 @@
 		<PackageReference Include="Westwind.Scripting" version="1.8.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <!--<ProjectReference Include="..\..\..\Libraries\Westwind.Scripting\Westwind.Scripting\Westwind.Scripting.csproj" />-->
-	</ItemGroup>
 
 	<ItemGroup>
 		<Resource Include="icon.png" />
