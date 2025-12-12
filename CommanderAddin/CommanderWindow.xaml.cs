@@ -39,7 +39,25 @@ namespace CommanderAddin
                     new CommanderCommand
                     {
                         Name = "Console Test",
-                        CommandText = "for(int x = 1;  x < 5; x++) {\n    Console.WriteLine(\"Hello World \" + x.ToString());\n}\n\n// Demonstrate async functionality\nusing (var client = new WebClient())\n{\n    var uri = new Uri(\"https://albumviewer.west-wind.com/api/album/37\");\n    var json = await client.DownloadStringTaskAsync(uri);\n    Console.WriteLine($\"\\n{json}\");\n}",
+                        CommandText = """
+                        {
+                          "KeyboardShortcut": "",
+                          "OpenSourceInEditorOnErrors": false,
+                          "Commands": [
+                            {
+                              "Name": "Console Test",
+                              "CommandText": "for(int x = 1;  x < 5; x++) {\n    Console.WriteLine(\"Hello World \" + x.ToString());\n}\n\n// Demonstrate async functionality\nusing (var client = new WebClient())\n{\n    var uri = new Uri(\"https://albumviewer.west-wind.com/api/album/37\");\n    var json = await client.DownloadStringTaskAsync(uri);\n    Console.WriteLine($\"\\n{json}\");\n}",
+                              "KeyboardShortcut": null
+                            },
+                            {
+                              "Name": "Open in VsCode",
+                              "CommandText": "var docFile = Model?.ActiveDocument?.Filename;\nif (string.IsNullOrEmpty(docFile))\n\treturn;\n\nModel.Window.SaveFile();\n\nvar exe = @\"%ProgramFiles%\\Microsoft VS Code\\Code.exe\";\nexe = Environment.ExpandEnvironmentVariables(exe);\n\nProcess pi = null;\ntry {\n\tvar lineNo = await Model.ActiveEditor.GetLineNumber();\n\tpi = Process.Start(exe,\"-g \\\"\" + docFile + $\":{lineNo + 1}\\\"\");\n}\ncatch(Exception ex) {\n\tModel.Window.ShowStatusError(\"Couldn't open editor: \" + ex.Message);\n\treturn;\n}\n\nif (pi != null)\n    Model.Window.ShowStatus($\"VS Code  started with: {docFile}\",5000);\nelse\n    Model.Window.ShowStatusError(\"Failed to start VS Code.\");\n",
+                              "KeyboardShortcut": "Alt-Shift-V"
+                            }
+                          ],
+                          "LastCommand": "Open in VsCode"
+                        }
+                        """                        
                     });
 
                 Model.AddinConfiguration.Commands.Add(

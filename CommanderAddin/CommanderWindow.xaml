@@ -22,37 +22,22 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions >
-            <RowDefinition Height="30" />
+            <RowDefinition Height="34" />
             <RowDefinition Height="*"  />
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
 
-        <ToolBarPanel Name="ToolbarPanelMain" Grid.Row="0" Grid.ColumnSpan="2">
-            <ToolBarPanel.Resources>
-                <Style x:Key="ToolbarIconRectangleStyle" TargetType="Rectangle">
-                    <Style.Setters>
-                        <Setter Property="Height" Value="16" />
-                        <Setter Property="Width" Value="16" />
-                    </Style.Setters>
-                    <Style.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.5" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ToolBarPanel.Resources>
-
+        <ToolBarPanel Name="ToolbarPanelMain" Grid.Row="0" Grid.ColumnSpan="2" >
 
             <StackPanel Orientation="Horizontal">
-                <ToolBar Name="ToolbarFile" >
-
+                <ToolBar Name="ToolbarFile">
                     <Button Name="ToolButtonNewCommand" Click="ToolButtonNewCommand_Click">
                         <StackPanel Orientation="Horizontal">
-                            <fa6:FontAwesome Icon="Solid_CirclePlus"  Foreground="ForestGreen"
-                                            FontSize="15"                                                                                        
-                                            Margin="5,2,5,0">
+                            <fa6:ImageAwesome Icon="Solid_CirclePlus"  PrimaryColor="ForestGreen"
+                                            Height="17"
+                                            Margin="0,0,6,0">
 
-                            </fa6:FontAwesome>
+                            </fa6:ImageAwesome>
 
                             <TextBlock>Add Command</TextBlock>
                         </StackPanel>
@@ -60,11 +45,10 @@
 
                     <Button Name="ToolButtonRemoveCommand" Click="ToolButtonRemoveCommand_Click">
                         <StackPanel Orientation="Horizontal">
-                            <fa6:FontAwesome Icon="Solid_Xmark"
-                                             Foreground="Firebrick"
-                                             FontSize="16"
-                                             Margin="5,2,10,0">
-                            </fa6:FontAwesome>
+                            <fa6:ImageAwesome Icon="Solid_Xmark"
+                                             PrimaryColor="Firebrick"                                      
+                                             Margin="5,0,10,0" Height="16">
+                            </fa6:ImageAwesome>
 
                             <TextBlock>Remove Command</TextBlock>
                         </StackPanel>
@@ -74,19 +58,19 @@
                 <ToolBar>
                     <Button Name="ToolButtonRunSnippet" Click="ToolButtonRunCommand_Click">
                         <StackPanel Orientation="Horizontal">
-                            <fa6:FontAwesome Icon="Solid_Play"  Foreground="ForestGreen"
-                                             Margin="5,2,5,0">
-                            </fa6:FontAwesome>
+                            <fa6:ImageAwesome Icon="Solid_Play"  PrimaryColor="ForestGreen"
+                                             Margin="5,0,5,0" Height="16">
+                            </fa6:ImageAwesome>
                             <TextBlock>Run Command</TextBlock>
                         </StackPanel>
                     </Button>
                     <Button Name="ToolButtonInfo" Click="ToolButtonMoreInfo_Click">
                         <StackPanel Orientation="Horizontal">
-                            <fa6:FontAwesome Icon="Solid_CircleInfo"  Foreground="SteelBlue"
-                                            FontSize="15"                                                                                        
-                                            Margin="5,2,10,0">
+                            <fa6:ImageAwesome Icon="Solid_CircleInfo"  PrimaryColor="SteelBlue"
+                                            Height="15"
+                                            Margin="5,0,10,0">
 
-                            </fa6:FontAwesome>
+                            </fa6:ImageAwesome>
 
                             <TextBlock>Documentation</TextBlock>
                         </StackPanel>
@@ -169,14 +153,11 @@
                                             HorizontalAlignment="Left" Height="11" 
                                             Padding="4 2" Focusable="False"
                                             ToolTip="Clear the Console" BorderThickness="0" >
-                                        <fa6:FontAwesome Icon="Solid_Xmark"  Foreground="Firebrick"
-                                                        FontSize="10"                                                                                        
-                                                        FontWeight="Normal" />
+                                        <fa6:ImageAwesome Icon="Solid_Xmark"  PrimaryColor="Firebrick" Height="10" Margin="2 1" />
                                     </Button>
                                 </StackPanel>
                                 <Image Grid.Column="1" Source="hsizegrip.png" Width="30" HorizontalAlignment="center" />
                             </Grid>
-
                         </Grid>
                     </ControlTemplate>
                 </GridSplitter.Template>
@@ -203,7 +184,7 @@
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem Grid.Column="0" Margin="2,1,0,0">
-                <fa6:ImageAwesome Name="StatusIcon" Icon="Solid_Circle" Foreground="ForestGreen" Height="15"/>
+                <fa6:ImageAwesome Name="StatusIcon" Icon="Solid_Circle" PrimaryColor="ForestGreen" Height="15"/>
             </StatusBarItem>
             <StatusBarItem Grid.Column="1">
                 <TextBlock Width="400" Name="StatusText" x:FieldModifier="public" HorizontalAlignment="Left">Ready</TextBlock>

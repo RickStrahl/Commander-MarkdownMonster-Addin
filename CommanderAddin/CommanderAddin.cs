@@ -181,7 +181,7 @@ namespace CommanderAddin
                         Console.WriteLine($"*** Script Compilation Errors:\n{parser.ErrorMessage}\n");
 
                         Console.WriteLine("\n*** Generated Code:");
-                        Console.WriteLine(parser.ScriptInstance.GeneratedClassCode);
+                        Console.WriteLine(parser.ScriptInstance.GeneratedClassCodeWithLineNumbers);
                     }
                     else
                     {
